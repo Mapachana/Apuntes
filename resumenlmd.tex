@@ -1,0 +1,779 @@
+\documentclass[a4paper]{article}
+\usepackage[spanish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{geometry}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{enumerate}
+\usepackage{array}
+\usepackage{tikz}
+\usepackage{float}
+\usepackage{soul}
+\usepackage{xstring} %quentin
+\usepackage{etoolbox} %quentin
+\usepackage{collcell} %quentin
+\usetikzlibrary{calc, matrix}
+\geometry{portrait, lmargin=2.5cm, rmargin=1.5cm} %tmargin bmargin portrait/landscape
+\title {\fbox{\Huge{\textbf{Resumen de lógica}}}}
+\author {\fbox{Mapachana}}
+%\date {}
+\newcolumntype{P}[1]{>{\centering\arraybackslash}p{#1}} %Nuevo tipo de columna de tabla en la que se centran los contenidos de las celdas (en este solo horizontal.
+\newcolumntype{M}[1]{>{\centering\arraybackslash}m{#1}} %Nuevo tipo de columna de tabla en la que se centran los contenidos de las celdas (en este horizontal y vertical.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%Aquí viene todo lo de los mapas de Karnaugh para hacerlo cómodo
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%isolated term
+%#1 - Optional. Space between node and grouping line. Default=0
+%#2 - node
+%#3 - filling color
+\newcommand{\implicantsol}[3][0]{
+    \draw[rounded corners=3pt, fill=#3, opacity=0.3] ($(#2.north west)+(135:#1)$) rectangle ($(#2.south east)+(-45:#1)$);
+    }
+
+
+%internal group
+%#1 - Optional. Space between node and grouping line. Default=0
+%#2 - top left node
+%#3 - bottom right node
+%#4 - filling color
+\newcommand{\implicant}[4][0]{
+    \draw[rounded corners=3pt, fill=#4, opacity=0.3] ($(#2.north west)+(135:#1)$) rectangle ($(#3.south east)+(-45:#1)$);
+    }
+
+%group lateral borders
+%#1 - Optional. Space between node and grouping line. Default=0
+%#2 - top left node
+%#3 - bottom right node
+%#4 - filling color
+\newcommand{\implicantcostats}[4][0]{
+    \draw[rounded corners=3pt, fill=#4, opacity=0.3] ($(rf.east |- #2.north)+(90:#1)$)-| ($(#2.east)+(0:#1)$) |- ($(rf.east |- #3.south)+(-90:#1)$);
+    \draw[rounded corners=3pt, fill=#4, opacity=0.3] ($(cf.west |- #2.north)+(90:#1)$) -| ($(#3.west)+(180:#1)$) |- ($(cf.west |- #3.south)+(-90:#1)$);
+}
+
+%group top-bottom borders
+%#1 - Optional. Space between node and grouping line. Default=0
+%#2 - top left node
+%#3 - bottom right node
+%#4 - filling color
+\newcommand{\implicantdaltbaix}[4][0]{
+    \draw[rounded corners=3pt, fill=#4, opacity=0.3] ($(cf.south -| #2.west)+(180:#1)$) |- ($(#2.south)+(-90:#1)$) -| ($(cf.south -| #3.east)+(0:#1)$);
+    \draw[rounded corners=3pt, fill=#4, opacity=0.3] ($(rf.north -| #2.west)+(180:#1)$) |- ($(#3.north)+(90:#1)$) -| ($(rf.north -| #3.east)+(0:#1)$);
+}
+
+%group corners
+%#1 - Optional. Space between node and grouping line. Default=0
+%#2 - filling color
+\newcommand{\implicantcantons}[2][0]{
+    \draw[rounded corners=3pt, opacity=.3] ($(rf.east |- 0.south)+(-90:#1)$) -| ($(0.east |- cf.south)+(0:#1)$);
+    \draw[rounded corners=3pt, opacity=.3] ($(rf.east |- 8.north)+(90:#1)$) -| ($(8.east |- rf.north)+(0:#1)$);
+    \draw[rounded corners=3pt, opacity=.3] ($(cf.west |- 2.south)+(-90:#1)$) -| ($(2.west |- cf.south)+(180:#1)$);
+    \draw[rounded corners=3pt, opacity=.3] ($(cf.west |- 10.north)+(90:#1)$) -| ($(10.west |- rf.north)+(180:#1)$);
+    \fill[rounded corners=3pt, fill=#2, opacity=.3] ($(rf.east |- 0.south)+(-90:#1)$) -|  ($(0.east |- cf.south)+(0:#1)$) [sharp corners] ($(rf.east |- 0.south)+(-90:#1)$) |-  ($(0.east |- cf.south)+(0:#1)$) ;
+    \fill[rounded corners=3pt, fill=#2, opacity=.3] ($(rf.east |- 8.north)+(90:#1)$) -| ($(8.east |- rf.north)+(0:#1)$) [sharp corners] ($(rf.east |- 8.north)+(90:#1)$) |- ($(8.east |- rf.north)+(0:#1)$) ;
+    \fill[rounded corners=3pt, fill=#2, opacity=.3] ($(cf.west |- 2.south)+(-90:#1)$) -| ($(2.west |- cf.south)+(180:#1)$) [sharp corners]($(cf.west |- 2.south)+(-90:#1)$) |- ($(2.west |- cf.south)+(180:#1)$) ;
+    \fill[rounded corners=3pt, fill=#2, opacity=.3] ($(cf.west |- 10.north)+(90:#1)$) -| ($(10.west |- rf.north)+(180:#1)$) [sharp corners] ($(cf.west |- 10.north)+(90:#1)$) |- ($(10.west |- rf.north)+(180:#1)$) ;
+}
+
+%Empty Karnaugh map 4x4
+\newenvironment{Karnaugh}%
+{
+\begin{tikzpicture}[baseline=(current bounding box.north),scale=0.8]
+\draw (0,0) grid (4,4);
+\draw (0,4) -- node [pos=0.7,above right,anchor=south west] {ab} node [pos=0.7,below left,anchor=north east] {cd} ++(135:1);
+%
+\matrix (mapa) [matrix of nodes,
+        column sep={0.8cm,between origins},
+        row sep={0.8cm,between origins},
+        every node/.style={minimum size=0.3mm},
+        anchor=8.center,
+        ampersand replacement=\&] at (0.5,0.5)
+{
+                       \& |(c00)| 00         \& |(c01)| 01         \& |(c11)| 11         \& |(c10)| 10         \& |(cf)| \phantom{00} \\
+|(r00)| 00             \& |(0)|  \phantom{0} \& |(1)|  \phantom{0} \& |(3)|  \phantom{0} \& |(2)|  \phantom{0} \&                     \\
+|(r01)| 01             \& |(4)|  \phantom{0} \& |(5)|  \phantom{0} \& |(7)|  \phantom{0} \& |(6)|  \phantom{0} \&                     \\
+|(r11)| 11             \& |(12)| \phantom{0} \& |(13)| \phantom{0} \& |(15)| \phantom{0} \& |(14)| \phantom{0} \&                     \\
+|(r10)| 10             \& |(8)|  \phantom{0} \& |(9)|  \phantom{0} \& |(11)| \phantom{0} \& |(10)| \phantom{0} \&                     \\
+|(rf) | \phantom{00}   \&                    \&                    \&                    \&                    \&                     \\
+};
+}%
+{
+\end{tikzpicture}
+}
+
+%Empty Karnaugh map 2x4
+\newenvironment{Karnaughvuit}%
+{
+\begin{tikzpicture}[baseline=(current bounding box.north),scale=0.8]
+\draw (0,0) grid (4,2);
+\draw (0,2) -- node [pos=0.7,above right,anchor=south west] {ab} node [pos=0.7,below left,anchor=north east] {c} ++(135:1);
+%
+\matrix (mapa) [matrix of nodes,
+        column sep={0.8cm,between origins},
+        row sep={0.8cm,between origins},
+        every node/.style={minimum size=0.3mm},
+        anchor=4.center,
+        ampersand replacement=\&] at (0.5,0.5)
+{
+                      \& |(c00)| 00         \& |(c01)| 01         \& |(c11)| 11         \& |(c10)| 10         \& |(cf)| \phantom{00} \\
+|(r00)| 0             \& |(0)|  \phantom{0} \& |(1)|  \phantom{0} \& |(3)|  \phantom{0} \& |(2)|  \phantom{0} \&                     \\
+|(r01)| 1             \& |(4)|  \phantom{0} \& |(5)|  \phantom{0} \& |(7)|  \phantom{0} \& |(6)|  \phantom{0} \&                     \\
+|(rf) | \phantom{00}  \&                    \&                    \&                    \&                    \&                     \\
+};
+}%
+{
+\end{tikzpicture}
+}
+
+%Empty Karnaugh map 2x2
+\newenvironment{Karnaughquatre}%
+{
+\begin{tikzpicture}[baseline=(current bounding box.north),scale=0.8]
+\draw (0,0) grid (2,2);
+\draw (0,2) -- node [pos=0.7,above right,anchor=south west] {a} node [pos=0.7,below left,anchor=north east] {b} ++(135:1);
+%
+\matrix (mapa) [matrix of nodes,
+        column sep={0.8cm,between origins},
+        row sep={0.8cm,between origins},
+        every node/.style={minimum size=0.3mm},
+        anchor=2.center,
+        ampersand replacement=\&] at (0.5,0.5)
+{
+          \& |(c00)| 0          \& |(c01)| 1  \\
+|(r00)| 0 \& |(0)|  \phantom{0} \& |(1)|  \phantom{0} \\
+|(r01)| 1 \& |(2)|  \phantom{0} \& |(3)|  \phantom{0} \\
+};
+}%
+{
+\end{tikzpicture}
+}
+
+%Defines 8 or 16 values (0,1,X)
+\newcommand{\contingut}[1]{%
+\foreach \x [count=\xi from 0]  in {#1}
+     \path (\xi) node {\x};
+}
+
+%Places 1 in listed positions
+\newcommand{\minterms}[1]{%
+    \foreach \x in {#1}
+        \path (\x) node {1};
+}
+
+%Places 0 in listed positions
+\newcommand{\maxterms}[1]{%
+    \foreach \x in {#1}
+        \path (\x) node {0};
+}
+
+%Places X in listed positions
+\newcommand{\indeterminats}[1]{%
+    \foreach \x in {#1}
+        \path (\x) node {X};
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%% Cosas quentin %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newtoggle{IsFirstColumn}\togglefalse{IsFirstColumn}%%
+\newtoggle{IsLastRow}\togglefalse{IsLastRow}%
+\newcommand{\ThisIsLastRow}{\global\toggletrue{IsLastRow}}%
+
+\newcommand{\MakeBox}[1]{\makebox[2.0em][c]{#1}}%
+\newcommand*{\MyBox}[1]{%
+    \phantom{\MakeBox{#1}}%
+    \IfStrEq{#1}{}{}{%
+        \begin{tikzpicture}[overlay, draw=black, line width=1.0pt, text=black]
+            \node [draw=none, inner sep=2pt] (Node) {\MakeBox{#1}};
+            \iftoggle{IsLastRow}{}{%
+                \draw (Node.south) -- ([yshift=-2.0ex]Node.south);
+            }%
+            \iftoggle{IsFirstColumn}{}{%
+                \draw (Node.west) -- ([xshift=-1.0em]Node.west);
+            }%
+        \end{tikzpicture}%
+    }%
+}
+
+\newcommand*{\MyBoxFirstColumn}[1]{%
+    \global\toggletrue{IsFirstColumn}%
+    \MyBox{#1}%
+    \global\togglefalse{IsFirstColumn}%
+}%
+
+\newcolumntype{C}{>{\collectcell\MyBox}c<{\endcollectcell}}
+\newcolumntype{F}{>{\collectcell\MyBoxFirstColumn}c<{\endcollectcell}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\begin{document}
+\maketitle
+%\tableofcontents
+
+
+\section{Inducción}
+\subsection{Principio de inducción}
+%Esto es texto.
+
+\section{Recurrencias}
+\subsection{Recurrencias lineales homogéneas}
+\large{Sea} k $\in \mathbb{N}$ una recurrencia lineal homogénea es cualquier igualdad de la forma:
+$$u_n=a_1u_{n-1}+...+a_ku_k$$
+donde $a_1,...,a_K$ son constantes. Si $a_k$ es distinto de 0, k es el orden de la relación de recurrencia y
+$$p(x)=x^k-a_1x^{k-1}-...-a_k$$
+es su polinomio característico. Si este polinomio se iguala a 0, se obtiene su ecuación característica.
+Para resoolver la recurrencia, calcularemos las solucion de la ecuación característica, obteniendo así raíces. Llamaremos m a la multiplicidad de una raíz (por ejemplo, si una ecuación tiene soluciones 2 y 2, solo tiene una ráiz pero con multiplicidad 2). LLamaremos t al número de raíces.
+Veremos dos casos:
+\begin{itemize}
+\item $k=1$\\
+t=1 m=1
+$$X_n=\alpha\cdot r^n$$
+\item $k=2$
+\begin{itemize}
+\item $t=2 \quad t\in\mathbb{R} \quad m_1=m_2=1$
+$$X_n=\alpha_1\cdot r_1^n+\alpha_2\cdot r_2^n$$
+\item $t=2 \quad y\in\mathbb{R} \quad m=2$
+$$X_n=(\alpha_{10}+\alpha_{11}n)\cdot r^n$$
+\item $t=2 \quad t\in\mathbb{C} \quad m_1=m_2=1$
+$$X_n=r^n\left(K_1\cos(n\theta) + K_2\sin(n\theta)\right)$$
+Donde r y $\theta$ se calculan como:\\
+$r=\sqrt{a^2+b^2} \quad \theta=2\arctan(\frac{b}{a+r})$\\
+$K_1=2a \quad K_2=-2b$
+\end{itemize}
+\end{itemize}
+Si bien no deberían caer recurrencias de grado mucho mayor de 2, por si acaso, conviene generalizar los casos donde las raíces son reales. La expresión es:
+$$X_n=r_1^n(\alpha_{1,0}+\alpha_{1,1}n+...+\alpha_{1,m-1}n^{m-1})+...+r_t^n(\alpha_{t,0}+\alpha_{t,1}n+...+\alpha_{t,m-1}n^{m-1})$$
+Donde cada m varía para cada raíz.
+Para calcular un recurrencia determinada (nos dan valores de $u_0, u_1,...u_n$ basta sustituir en la expresión el valor de n que nos dan e igualar al número que queremos obtener para ese valor de n e ir despejeando y hallando incógnitas.\\
+\large{\textbf{Ejemplo}}
+Resuelva la relación de recurrencia y encuentr la solución particular indicada.
+$$u_{n+2}=6u_{n+1}-9_n$$
+$$u_0=1, u_1=6$$
+Orden de la relación de recurrencia: $k=2$.\\
+Polinomio característico: $x^2-6x+9$.\\
+Ecuación característica: $x^2-6x+9=0$.\\
+Las soluciones de la ecuación característica son: $x_1=x_2=3$. Esto es, tenemos una sola raíz con multiplicidad 2 (la misma raíz aparece 2 veces, es solución doble), luego la solución será de la forma:
+$$X_n=(\alpha_1+\alpha_2n)\cdot 3^n$$
+Donde falta hallar dos incógnitas, que conseguiremos usando los valores que nos dan para la recurrencia particular, si no nos pidieran esto, habríamos acabado el ejercicio.\\
+Para hallar las incógnitas sustituyo los valores de $n$ e igualo al valor que me dan como sigue:
+$$u_0=1=(\alpha_1+\alpha_2\cdot 0)\cdot 3^0;$$
+$$\alpha_1=1$$
+$$u_1=6=(\alpha_1+\alpha_2\cdot 1)\cdot 3^1;$$
+$$6=(1+\alpha_2)\cdot 3;$$
+$$6=3+3\alpha_2;$$
+$$\alpha_2=1$$
+Luego la recurrencia particular es:
+$$X_n=(1+n)\cdot 3^n$$
+
+\subsection{Recurencias lineales no homogéneas}
+Estas recurrencias son de la forma:
+$$u_n=a_1u_{n-1}+...+a_ku_k+f(n)$$
+Donde f(n) está formada por dos partes:
+\begin{itemize}
+\item q(n): Es un polinomio que va multiplicando.
+\item S: Es un número que va elevado a n.
+\end{itemize}
+Esto es: $f(n)=q(n)\cdot S^n$
+Para resolver estas recurrencias calcularemos dos cosas: La solución a la recurrencia lineal homogénea asociada (quitando el f(n)) que será $\{X_n^{(h)}\}$ y la solución $\{X_n^{(p)}\}$ que, al sumarlas, nos dará la solución de la recurrencia.
+Para calcular $\{X_n^{(p)}\}$ Simplemente localizaremos S y q(n) por separado y comprobaremos si S es una solución de la ecuación homogénea asociada, m será la multiplicidad de S en las raíces de la ecuación. Llamaremos por ejemplo g al grado de q(n), entonces:
+$$\{X_n^{(p)}\}=n^m\cdot (c_1+c_2n+...+c_gn^g)\cdot S^n$$
+Para calcular las constantes del polinomio $c_1,c_2,...,c_n$ se sustituirá la solución en la recurrencia variando n de acuerdo a la expresión y se resolverá el sistema o ecuación para calcular estos valores.\\
+\large{\textbf{Ejemplo}}
+Resuelva la relación de recurrencia:
+$$u_{n+2}=-4u_{n+1}-3u_n+5(-2)^n$$
+Orden de la relación de recurrencia: $k=2$.\\
+Polinomio característico asociado: $x^2-+4x+3$.\\
+Ecuación característica asociada: $x^2+4x+3=0$.\\
+Las soluciones de la ecuación característica asociada son: $x_1= -1; x_2=-3$. Esto es, tenemos dos raíces con multiplicidad 1, luego la solución será de la forma:
+$$\{X_n^{(h)}\}=\alpha_1(-1)^n+\alpha_2(-3)^n$$
+Donde falta hallar dos incógnitas, que en este caso no tenemos datos para calcular, por lo que los dejaremos así.\\
+Ahora calcularemos la otra solución necesaria.
+$$f(n)=5\cdot (-2)^n$$
+Luego:
+$$q(n)= 5 \quad S=-2$$
+El grado de $q(n)$ es 1 y -2 no es solución de la ecuación característica asociada, por lo que la solución será de la forma:
+$$\{X_n^{(p)}\}=n^0\cdot c\cdot (-2)^n=c\cdot (-2)^n$$
+Donde sólo faltaría hallar c, lo que haremos sustituyendo en la ecurrencia de esta forma:
+$$c(-2)^{n+2}=-4(c(-2)^{n+1})-3(c(-2)^n)+5(-2)^n;$$
+$$c(-2)^2(-2)^n+4c(-2)(-2)^n+3c(-2)^n-5(-2)^n=0;$$
+$$4c(-2)^n-8c(-2)^n+3c(-2)^n-5(-2)^n=0;$$
+$$(-2)^n(4c-8c+3c-5)=0;$$
+$$4c-8c+3c-5=0;$$
+$$-c-5=0;$$
+$$c=-5$$
+Por tanto:
+$$\{X_n^{(p)}\}=-5\cdot (-2)^n$$
+Y la solución de la recurrencia es la suma de ambas, entonces la solución es:
+$$X_n=\alpha_1(-1)^n+\alpha_2(-3)^n-5(-2)^n$$
+Para calcular $\alpha_1$ y $\alpha_2$ necesitaríamos unos valores de n, como $u_0, u_1,\ldots U_n$ para sustituir y despejarlos.
+
+\subsection{Recurrencias no lineales}
+Si cae esto, llorad. Es básicamente probar lo que se te ocurra y tener suerte.
+
+%$$\forall \exists \neg \lor \land \models$$
+%$$\mathbb{RNQZMS}$$
+%$$\mathcal{AHX}$$
+
+
+\section{Lógica proposicional}
+\subsection{Introducción}
+Este tema trata básicamente de discernir entre conjuntos de cláusulas satisfacibles e instatisfacibles.\\
+Una cláusula es un conjunto de símbolos, como: $x\\rightarrow y\quad (x\land y)\lor z$
+Primero veremos como trabajar con cláusulas:\\
+Las cláusulas están formadas por los símbolos: $\rightarrow, \neg, \lor, \land, \leftrightarrow, (, )$\\
+Existen aplicaciones sobre las cláusulas que valen 0 o 1, dependiendo de si las satisfacen o no. Sean $\alpha y \beta$ cláusulas y v una aplicación:
+\begin{itemize}
+\item $v(\neg\alpha)=v(\alpha)+1$
+\item $v(\alpha\rightarrow\beta)=v(\alpha)v(\beta)+v(\alpha)+1$
+\item $v(\alpha\lor\beta)=v(\alpha)v(\beta)+v(\alpha)+v(\beta)$
+\item $v(\alpha\land\beta)=v(\alpha)v(\beta)$
+\item $v(\alpha\leftrightarrow\beta)=v(\alpha)+v(\beta)+1$
+\end{itemize}
+\large{\textbf{Ejemplo}}
+Sea $v(\alpha)=1 \quad v(\beta)=0$
+$$v(\neg\alpha)=1+1=0$$
+$$v(\neg\beta)=0+1=1$$
+$$v(\alpha\lor\beta)=1\cdot 0 +1+0=1$$
+Se dirá que un conjunto es satisfacible si existe al menos una aplicación que haga verdaderas todas las cláusulas del conjunto. Será insatisfacible si no es satisfacible.\\
+Para simplificar el algoritmo que usaremos para determinar la satisfacibilidad de un conjunto, pondremos primero las cláusulas en forma normal conjuntiva, para lo que usaremos estas leyes:
+\begin{itemize}
+\item $(\alpha\land\beta)\equiv(\neg\alpha\rightarrow\beta)\land(\neg\beta\rightarrow\alpha)$
+\item $\alpha\rightarrow\beta\equiv\neg\alpha\lor\beta$
+\item $\neg\neg\alpha\equiv\alpha$
+\item $\neg(\alpha\lor\beta)\equiv\neg\alpha\land\neg\beta$
+\item $\neg(\alpha\land\beta)\equiv\neg\alpha\lor\neg\beta$
+\item $\alpha\lor(\beta\land\gamma)\equiv(\alpha\lor\beta)\land(\alpha\lor\gamma)$
+\item $\alpha\models\beta\rightarrow\gamma\equiv\alpha,\beta\models\gamma$
+\end{itemize}
+Transformar una cláusula a su equivalente en forma normal conjuntiva se conseguirá aplicando las reglas anteriores.\\
+Como estrategia general, primero eliminaremos las flechas y luego iremos introduciendo las negaciones, hasta obtener una conjunción de disyunciones.\\
+\large{\textbf{Ejemplo}}
+Poner en forma normal conjuntiva: $(a\lor b)\rightarrow(c\lor d)$
+$$(a\lor b)\rightarrow(c\lor d)$$
+$$\equiv\neg(a\lor b)\lor (c\lor d)$$
+$$\equiv (\neg a \land \neg b)\lor(c \lor d)$$
+$$\equiv (\neg a\lor c\lor d) \land (\neg b\lor c \lor d)$$
+Suele ser común que nos pidan que comprobemos si un conjunto $\Gamma\models\gamma$, esto es, comprobar que el conjunto $\Gamma\cup\gamma$ es insatisfacible.
+
+\subsection{Algoritmo de Davis-Putnam}
+Se usa para ver si un conjunto es satisfacible o no aplicando cuatro reglas en orden:
+\begin{enumerate}[I]
+\item Eliminar tautologías, por ejemplo: $\alpha\lor\neg\alpha$. Sólo se hace la primera vez.
+\item Si hay cláusulas unit (formadas por un solo literal, como c, $\neg d$) se coge $\lambda$ y se eliminan todas las cláusulas completas donde aparezca $\lambda$, si queda el conjunto vacío, el conjunto es satisfacible, si no, se coge $\lambda^c$, que es la negada de $\lambda$ y elimina solo la aparición de esta en las claúsulas. Si queda el conjunto vacío el conjunto es insatisfacible.
+\item Se aplica si aparece un literal y no su negado, se eliminan las claúsulas donde aparece dicho literal.
+\item Se escoge un literal $\lambda$ y su negada $\lambda^c$ y se divide en dos conjuntos, en uno están las claúsulas en las que aparece $\lambda$ y en otro donde aparece $\lambda^c$, en ambos omitiendo los literales elegidos. Las cláusulas en las que no aparezca ninguno, van en ambos conjuntos. El conjunto inicial es insatisfacible si y solo si todos sus subonjuntos lo son.
+\end{enumerate}
+
+\large{\textbf{Ejemplo}}
+Estudiar si $\gamma_1,\gamma_2,\gamma_3\models\varphi$ y dar una aplicación que evidencie el resultado.
+$$\gamma_1=(a\lor b)\rightarrow(c\lor d)$$
+$$\gamma_2=(\neg a\land\neg d)\rightarrow(\neg c\land(c\lor e))$$
+$$\gamma_3= a \rightarrow(\neg c\land\neg b\land(\neg d\lor b))$$
+$$\varphi=(d\rightarrow(b\lor a))\rightarrow(d\land\neg(a\lor\neg b))$$
+Comprobar que $\gamma_1,\gamma_2,\gamma_3\models\varphi$ es equivalente a comprobar que $\{\gamma_1,\gamma_2,\gamma_3\neg\varphi\}$ es insatisfacible.\\
+Para ello, primero pondremos todas las fórmulas en forma normal conjuntiva, como sigue:
+
+$$\gamma_1=(a\lor b)\rightarrow(c\lor d)$$
+$$\equiv\neg(a\lor b)\lor (c\lor d)$$
+$$\equiv (\neg a \land \neg b)\lor(c \lor d)$$
+$$\equiv (\neg a\lor c\lor d) \land (\neg b\lor c \lor d)$$
+%vspace{0.5cm}
+
+$$\gamma_2=(\neg a\lor\neg d)\rightarrow(\neg c\land(c\lor e))$$
+$$\equiv\neg(\neg a\land\neg d)\lor(\neg c\land(c\lor e))$$
+$$\equiv\neg\neg a\lor\neg\neg d)\lor(\neg c\land(c\lor e))$$
+$$\equiv(a\lor c\lor d)\land(a\lor d\lor c\lor e))$$
+
+$$\gamma_3= a \rightarrow(\neg c\land\neg b\land(\neg d\lor b))$$
+$$\equiv\neg a\lor(\neg c\land\neg b\land(\neg d\lor b))$$
+$$\equiv(\neg a\lor\neg c)\land(\neg a\lor \neg b)\land(\neg a\lor\neg d\lor b)$$
+
+$$\neg\varphi=\neg((d\rightarrow(b\lor a))\rightarrow(d\land\neg(a\lor\neg b)))$$
+$$\equiv\neg(\neg(d\rightarrow(b\lor a))\lor(d\land\neg(a\lor\neg b)))$$
+$$\equiv\neg(\neg(\neg d\lor b\lor a)\lor(d\land\neg(a\lor\neg b))$$
+$$\equiv\neg\neg(\neg d\lor b\lor a)\land\neg(d\land\neg(a\lor\neg b))$$
+$$\equiv(\neg d\lor b\lor a)\land(\neg d\lor\neg\neg(a\lor\neg b))$$
+$$\equiv(\neg d\lor b\lor a)\land(\neg d\lor a\lor\neg b)$$
+Ahora que tenemos lsa formas normales conjuntivas de todas las cláusulas, podemos formar el conjunto:
+%\begin{multline} para hacer lo mismo pero sin alinear al centro.
+\begin{equation}
+\begin{split}
+\{(\neg a\lor c\lor d) \land (\neg b\lor c \lor d)\\(a\lor c\lor d)\land(a\lor d\lor c\lor e))\\ (\neg a\lor\neg c)\land(\neg a\lor \neg b)\land(\neg a\lor\neg d\lor b)\\ (\neg d\lor b\lor a)\land(\neg d\lor a\lor\neg b)\}
+\end{split}
+\end{equation}
+Este conjunto es equivalente a este conjunto (separando por las $\land$):
+\begin{equation}
+\begin{split}
+\Gamma=\{\neg a\lor c\lor d \quad \neg b\lor c \lor d\quad a\lor c\lor d\\a\lor d\lor c\lor e\quad \neg a\lor\neg c\quad\neg a\lor \neg b\quad\neg a\lor\neg d\lor b\\ \neg d\lor b\lor a\quad \neg d\lor a\lor\neg b \}
+\end{split}
+\end{equation}
+Ahora estudiaremos la satisfacibilidad de  $\Gamma$ mediante el algoritmo de Davis-Putnam:\\
+I)No hay tautologías, luego no aplicamos esta regla.\\
+II)No hay cláusulas unit, luego no aplicamos esta regla tampoco.\\
+III)Podemos aplicarla ya que aparece e y no $\neg e$: $\lambda=e$ y queda el conjunto:
+\begin{equation}
+\begin{split}
+\{\neg a\lor c\lor d \quad \neg b\lor c \lor d\quad a\lor c\lor d\\ \neg a\lor\neg c\quad\neg a\lor \neg b\quad\neg a\lor\neg d\lor b\\ \neg d\lor b\lor a\quad \neg d\lor a\lor\neg b \}
+\end{split}
+\end{equation}
+II y III)No pueden aplicarse.
+IV)Divido en dos subconjuntos. $\lambda=\neg a \quad \lambda^c=a$:
+$$\Delta_1=\{c\lor d\quad \neg b\lor c\lor d\quad\neg c\quad\neg b\quad b\lor\neg d\}$$
+$$\Delta_2=\{\neg b\lor c\lor d\quad d\lor\neg c\quad b\lor\neg d\quad\neg b\lor\neg d\}$$
+$\Gamma$ es insatisfacible si y solo si $\Delta_1$ y $\Delta_2$ lo son. Comencemos analizando $\Delta_1$:\\
+II)Se puede aplicar, ya que hay una cláusula unit ($\neg c$). $\lambda=\neg c$. Elimino las cláusulas donde aparece.
+$$\{ c\lor d\quad\neg b\lor c\lor d\quad\neg b\quad b\lor\neg d \}\neq \emptyset$$
+$$\lambda^c=c$$
+$$\{d\quad\neg b\lor d\quad\neg b\quad b\lor\neg d\}$$
+II)$\lambda=d$
+$$\{\neg b\quad b\lor\neg d\}\neq\emptyset$$
+$$\lambda^c=\neg d$$
+$$\{\neg b\quad b\}$$
+II)$\lambda=\neg b$
+$$\{b\}\neq\emptyset$$
+$$\lambda^c=b$$
+$$\{\square\}$$
+Esto es la cláusula vacía, luego este conjunto es insatisfacible, por lo que debemos seguir hasta hacer todos los conjuntos o encontrar uno satisfacible. Analicemos ahora $\Delta_2$:
+II y III) No se pueden aplicar.
+IV)Divido en dos subconjuntos. $\lambda=\neg b \quad \lambda^c=b$:
+$$\Delta_3=\{c\lor d\quad d\lor\neg c\quad\neg d\}$$
+$$\Delta_4=\{d\lor\neg c\quad\neg d\quad\neg d\}$$
+$\Delta_2$ es insatisfacible si y solo si $\Delta_3$ y $\Delta_4$ lo son. Comencemos analizando $\Delta_3$:\\
+II)$\lambda=\neg d$
+$$\{d\lor c\quad d\lor\neg c\}\neq\emptyset$$
+$$\lambda^c=d$$
+$$\{c\quad\neg c\}$$
+II)$\lambda=c$
+$$\{\neg c\}\neq\emptyset$$
+$$\lambda^c=\neg c$$
+$$\{\square\}$$
+Luego este conjunto es insatisfacible. Analicemos ahora $\Delta_4$:\\
+II)$\lambda=\neg d$
+$$\{d\lor\neg c\}\neq\emptyset$$
+$$\lambda^c=d$$
+$$\{\neg c\}$$
+II)$\lambda=\neg c$
+$$\emptyset$$
+Luego este conjunto es satisfacible, por lo tanto $\Delta_2$ también lo es y $\Gamma$ también, lo que implica que la afirmación que se nos pedía demostrar es falsa ya que el conjunto no es insatisfacible.
+
+\section{Álgebra de Boole}
+\subsection{Álgebras de Boole}
+Un álgebra de Boole es cualquier álgebra que cumpla:
+\begin{itemize}
+\item $a+b=b+a$
+\item $a\cdot b=b\cdot a$
+\item $a+(b\cdot c)=(a+b)\cdot(a+c)$
+\item $a\cdot(b+c)=a\cdot b+a\cdot c$
+\item $a\cdot\bar{a}=0$
+\item $a+\bar{a}=1$
+\item $a+0=a$
+\item $a\cdot 1=a$
+
+Donde las operaciones corresponden a las tablas:
+\begin{table}[H]
+\begin{tabular}{|c|c|}
+\hline
+$x$ & $\bar{x}$ \\
+\hline
+0 & 1 \\
+\hline
+1 &  0\\
+\hline
+\end{tabular}
+\end{table}
+\begin{table}[H]
+\begin{tabular}{|c|c|c|}
+\hline
+$+$ & 0 & 1 \\
+\hline
+0 & 0 & 1 \\
+\hline
+1 & 1 & 1 \\
+\hline
+\end{tabular}
+\end{table}
+\begin{table}[H]
+\begin{tabular}{|c|c|c|}
+\hline
+$\cdot$ & 0 & 1 \\
+\hline
+0 & 0 & 0 \\
+\hline
+1 & 0 & 1 \\
+\hline
+\end{tabular}
+\end{table}
+\end{itemize}
+\subsection{Mapas de Karnaugh}
+Dada una función por sus valores, otra expresión de la función o la tabla de verdad, tenemos distintos tipos de Mapas de Karnaugh, para dos, tres o cuatro variables por lo general.
+En una tabla como las que se van a mostrar se pondrán los valores donde la función valga 1 (minitérminos, es una suma de productos) o 0 (maxitérminos, es un producto de sumas) y se agrupan (cuanto mayor sea el grupo, mejor) en potencias de 2 (,2,4,8,16).\\
+Para hacer los grupos es necesario tener en cuenta que los bordes se tocan, es decir, upedes hacer grupos de un extremo a otro (vertical y horizontalmente). También está permitido hacer un grupo de 4 con las esquinas.\\
+Existen los términos no importa, que se representan como X y se usan como 1 o 0, dependiendo del método usado, solo si conviene para hacer un grupo mayor y así simplificar más.\\
+Al hacer los grupos se miran qué números tienen en común (0010 y 0011 coinciden en 001) y esa será la expresión de ese grupo, al juntar todas se obtendrá la expresión simplificada que se buscaba.
+\begin{itemize}
+\item Si se trabaja en minitérminos los 1 son esa variable (digamos a) y los 0 serán su negada ($\bar{a}$)
+\item Si se trabaja en maxitérminos los 0 son esa variable (digamos a) y los 1 serán su negada ($\bar{a}$)
+\end{itemize} 
+\large{\textbf{Ejemplo}}
+Los números 101 correspondientes a 3 variables, a,b,c en común en un grupo en minitérminos serían $a\bar{b}c$ y en maxitérminos serían $\bar{a}+b+\bar{c}$.
+\vspace{0.5cm}
+Las distintas formas de hacer grupos en Mapas de Karnaugh son:
+
+\begin{Karnaugh}
+        \contingut{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
+       %\implicant{0}{5}{red}
+       %\implicant{15}{15}{orange}
+       \implicantdaltbaix[3pt]{1}{11}{blue}
+    	\implicantcantons[2pt]{purple}
+       \implicantcostats[3pt]{4}{14}{green}
+    \end{Karnaugh}
+    \begin{Karnaugh}
+        \contingut{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
+       \implicant{0}{5}{red}
+       \implicant{15}{15}{orange}
+       \implicant{12}{13}{green}
+       %\implicantdaltbaix[3pt]{1}{11}{blue}
+    	%\implicantcantons[2pt]{purple}
+       %\implicantcostats[3pt]{4}{14}{green}
+    \end{Karnaugh}
+    \begin{Karnaugh}
+        \contingut{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
+       \implicant{0}{6}{blue}
+       \implicant{8}{10}{green}
+    \end{Karnaugh}
+    \begin{Karnaugh}
+        \contingut{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
+       \implicant{0}{10}{red}
+    \end{Karnaugh}
+     \begin{Karnaughvuit}
+       \minterms{}
+       \maxterms{0,1,2,3,4,5,6,7}
+       \indeterminats{}
+       \implicant{3}{2}{green}
+       \implicantcostats[2pt]{0}{6}{red}
+       \implicantsol{1}{orange}
+    \end{Karnaughvuit}
+    \begin{Karnaughvuit}
+       \minterms{}
+       \maxterms{0,1,2,3,4,5,6,7}
+       \indeterminats{}
+       \implicant{0}{5}{red}
+       \implicant{0}{2}{blue}
+    \end{Karnaughvuit}
+    \\
+    \begin{Karnaughvuit}
+       \minterms{}
+       \maxterms{0,1,2,3,4,5,6,7}
+       \indeterminats{}
+       \implicant{0}{6}{green}
+    \end{Karnaughvuit}
+    \begin{Karnaughquatre}
+        \minterms{}
+       \maxterms{0,1,2,3}
+       \implicantsol{1}{green}
+       \implicant{2}{3}{red}
+    \end{Karnaughquatre}
+    \begin{Karnaughquatre}
+        \minterms{}
+       \maxterms{0,1,2,3}
+       \implicant{0}{3}{blue}
+    \end{Karnaughquatre}
+    
+
+
+%LAS COORDENADAS SE PONEN INTERCAMBIANDO AB CD. POR ESO NO TE CUADRABA NADA.
+
+\large{\textbf{Ejemplo}}
+Dar la función mínima como producto de sumas y como suma de productos de la función:
+$$f(a,b,c,d)=\Sigma(0,1,2,4,5,6,8,9,15)$$
+Esto significa que tenemos la función vale 1 en estas posiciones de la tabla de verdad. Primero construimos la tabla de verdad:
+
+\begin{table}[H] %Esta [H] hace que mi tabla aparezca donde yo quiero
+\begin{tabular} { | P{0.5cm} | P{0.5cm} | P{0.5cm} | P{0.5cm} | P{2cm} | }
+\hline
+a & b & c & d & f(a,b,c,d) \\
+\hline
+0 & 0 & 0 & 0 & 1 \\
+0 & 0 & 0 & 1 & 1 \\
+0 & 0 & 1 & 0 & 1 \\
+0 & 0 & 1 & 1 & 0 \\
+0 & 1 & 0 & 0 & 1 \\
+0 & 1 & 0 & 1 & 1 \\
+0 & 1 & 1 & 0 & 1 \\
+0 & 1 & 1 & 1 & 0 \\
+1 & 0 & 0 & 0 & 1 \\
+1 & 0 & 0 & 1 & 1 \\
+1 & 0 & 1 & 0 & 0 \\
+1 & 0 & 1 & 1 & 0 \\
+1 & 1 & 0 & 0 & 0 \\
+1 & 1 & 0 & 1 & 0 \\
+1 & 1 & 1 & 0 & 0 \\
+1 & 1 & 1 & 1 & 1 \\
+\hline
+\end{tabular}
+\end{table}
+
+Ahora construimos los mapas de Karnaugh (se pueden poner solo los 1 en los minitérminos y solo los 0 en maxitérminos, pero en este caso yo pongo ambos, por comodidad)
+Comenzamos con el mapa de los minitérminos:
+
+\begin{Karnaugh}
+        \contingut{1,1,1,0,1,1,1,0,1,1,0,0,0,0,0,1}
+       \implicant{0}{5}{red}
+       \implicant{15}{15}{orange}
+       \implicantdaltbaix[3pt]{0}{9}{blue}
+       \implicantcostats[3pt]{0}{6}{green}
+    \end{Karnaugh}
+ 
+Vamos a ver qué factores salen de cada grupo:
+\begin{itemize}
+\item Rojo) $\bar{a}\cdot\bar{c}$
+\item Naranja) $c$
+\item Azul) $\bar{a}\cdot\bar{d}$
+\item Verde) $\bar{b}\cdot\bar{c}$
+\end{itemize}
+Luego la función simplificada por minitérminos es:
+$$\bar{a}\cdot\bar{c}+a\cdot b\cdot c\cdot d+\bar{a}\cdot\bar{d}+\bar{b}\cdot\bar{c}$$   
+
+En el caso del mapas de los maxitérminos:
+    
+    \begin{Karnaugh}
+        \contingut{1,1,1,0,1,1,1,0,1,1,0,0,0,0,0,1}
+       \implicant{3}{7}{red}
+       \implicant{12}{13}{green}
+       \implicant{14}{10}{blue}
+       \implicant{11}{10}{orange}
+    \end{Karnaugh}
+
+Vamos a ver qué factores salen de cada grupo:
+\begin{itemize}
+\item Rojo) $\bar{a}+\bar{b}+c$
+\item Naranja) $\bar{a}+\bar{c}+d$
+\item Azul) $\bar{a}+b+\bar{c}$
+\item Verde) $a+\bar{b}+\bar{c}$
+\end{itemize}
+Luego la función simplificada por maxitérminos es:
+$$(\bar{a}+\bar{b}+c)\cdot(\bar{a}+\bar{c}+d)\cdot(\bar{a}+b+\bar{c})\cdot(a+\bar{b}+\bar{c})$$
+
+\large{\textbf{Ejemplo}}
+Dar la función mínima como producto de sumas y como suma de productos de la función que vale 1 en 1 y 6 y con términos no importa en 3 y 4.\\
+Primeramente construimos la tabla de verdad con los datos de la función que nos dan:
+\begin{table}[H] %Esta [H] hace que mi tabla aparezca donde yo quiero
+\begin{tabular} { | P{0.5cm} | P{0.5cm} | P{0.5cm} | P{2cm} | }
+\hline
+a & b & c & f(a,b,c) \\
+\hline
+0 & 0 & 0 & 0 \\
+0 & 0 & 1 & 1 \\
+0 & 1 & 0 & 0 \\
+0 & 1 & 1 & X \\
+1 & 0 & 0 & X \\
+1 & 0 & 1 & 0 \\
+1 & 1 & 0 & 1 \\
+1 & 1 & 1 & 0 \\
+\hline
+\end{tabular}
+\end{table}
+    
+Ahora construimos los mapas de Karnaugh (se pueden poner solo los 1 en los minitérminos y solo los 0 en maxitérminos, pero en este caso yo pongo ambos, por comodidad) poniendo los términos no importa y simplifiquemos por minitérminos.
+
+    \begin{Karnaughvuit}
+       \minterms{3,4}
+       \maxterms{0,1,6,7}
+       \indeterminats{2,5}
+       \implicant{3}{2}{green}
+       \implicant{4}{5}{red}
+    \end{Karnaughvuit}
+
+En este caso, poner los términos no importa como 1 nos ayuda a hacer grupos mayores, por los que los tomaremos como si fueran 1, si no, bastaría tomarlos como 0.
+\begin{itemize}
+\item Verde) $a\bar{c}$
+\item Rojo) $\bar{a}c$
+\end{itemize}
+Luego la función simplificada por miitérminos es: $a\bar{c}+\bar{a}c$
+
+\subsection{Algoritmo de Quentin-McCluskey}
+Este algoritmo es otro método para simplificar funciones (como los mapas de Karnaugh). Consiste en construir una tabla en las que se clasificarán los números en los que la función valga 1 con las siguientes columnas:
+\begin{itemize}
+\item Número de 1 del número. El número 2 (0010) tiene un 1.
+\item Números en los que la función valga 1 (en la fila del número de 1 que les corresponda).
+\item Las siguientes columnas se trata en ir agrupando los elementos anteriores, comparando cada número/conjunto de números con los que son mayores que él de la fila siguiente. y viendo si se diferencian en un sólo número, entonces se anotan dejando el espacio de donde se diferencian. Se irán marcando los elementos usados. Por ejemplo, el 0 (0000) y el 2 (0010) se distinguen en un sólo número, ($00\_0$)
+\end{itemize}
+Cuando ya no se pueden agrupar más,se hará un esquema donde se hará una línea vertical de cada número donde la función vale 1 y una línea horizontal para cada elemento/conjunto sin marcar. Se harán círculos en las intersecciones si el número de la barra vertical pertenece al conjuto horizontal. Se pondrán los conjuntos que tengan un círculo en líneas donde ninguno más lo tengan (son imprescindibles) y se expresará la función como minitérminos.
+
+\large{\textbf{Ejemplo}}
+Dé la expresión mínima de la función:
+$$f(a,b,c,d)=\Sigma(0,2,3,6,7,8,9,10,13)$$
+Aquí no es necesario construir la tabla de verdad, pero es recomendable:
+
+\begin{table}[H] %Esta [H] hace que mi tabla aparezca donde yo quiero
+\begin{tabular} { | P{0.5cm} | P{0.5cm} | P{0.5cm} | P{0.5cm} | P{2cm} | }
+\hline
+a & b & c & d & f(a,b,c,d) \\
+\hline
+0 & 0 & 0 & 0 & 1 \\
+0 & 0 & 0 & 1 & 0 \\
+0 & 0 & 1 & 0 & 1 \\
+0 & 0 & 1 & 1 & 1 \\
+0 & 1 & 0 & 0 & 0 \\
+0 & 1 & 0 & 1 & 0 \\
+0 & 1 & 1 & 0 & 1 \\
+0 & 1 & 1 & 1 & 1 \\
+1 & 0 & 0 & 0 & 1 \\
+1 & 0 & 0 & 1 & 1 \\
+1 & 0 & 1 & 0 & 1 \\
+1 & 0 & 1 & 1 & 0 \\
+1 & 1 & 0 & 0 & 0 \\
+1 & 1 & 0 & 1 & 1 \\
+1 & 1 & 1 & 0 & 0 \\
+1 & 1 & 1 & 1 & 0 \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\begin{tabular}{|M{2cm}|M{2cm}|M{5cm}|M{5cm}|}
+\hline
+0 & 0 & \shortstack{0,2 $00\_0$ \\ 0,8 $\_000$} & \shortstack{0,2,8,10 $\_0\_0$ \\ \textst{0,8,2,10 $\_0\_0$}} \\
+\hline
+1 & \shortstack{2 \\ 8} & \shortstack{2,3 $001\_$ \\ 2,6 $0\_10$ \\ 2,10 $\_010$ \\ 8,9 $100\_$ \\ 8,10 $10\_$} & \shortstack{2,3,6,7 $0\_1\_$ \\ \textst{2,6,3,7 $0\_1\_$}} \\
+\hline
+2 & \shortstack{3 \\ 6 \\ 9 \\ 10} & \shortstack{3,7 $0\_11$ \\ 6,7 $011\_$ \\ 9,13 $1\_01$} &  \\
+\hline
+3 & \shortstack{7 \\ 13} &  &  \\
+\hline
+4 &  &  &  \\
+\hline
+\end{tabular}
+\end{table}
+
+
+
+$\begin{array}{F*{20}{C}}
+   |  &  0 &   2 &   3 &   6 &  7 &  8 & 9 & 10 & 13 \\[2.0ex]
+    0,2,8,10 &  O &  O  &  -  &   - &  - &  O & - & O & - \\[2.0ex] 
+   2,3,6,7 &  - &   O &   O &   O &  O &  - & - & - & - \\[2.0ex]
+   8,9 &  - &   - &   - &   - &  - &  O & O & - & O \\[2.0ex]
+   9,13 &  - &   - &   - &   - &  - &  - & O & - & O \\[2.0ex] \ThisIsLastRow
+       &  O &   O &   O &   O &  O &  O & O & O & O \\
+\end{array}$
+
+Como se puede ver, todos los grupos osn esenciales salvo el 8,9 ya que ningún círculo de esta línea es único en sus verticales. Por tanto, cogiendo los otros grupos, tenemos que la función es:
+$$f(a,b,c,d)=\bar{b}\bar{d}+\bar{a}c+a\bar{c}d$$
+
+
+\section{Lógica de primer orden}
+\subsection{Introducción}
+%Esto es texto.
+\subsection{Forma prenexa}
+%Esto va a aser diver poner ejemplos, help.
+\subsection{Resolución por reducción}
+%\begin{equation}
+%e^{i\pi}+1=0 \label{eq:euler2}
+%\end{equation}
+%COMO ESCRIBO LAS RAYITAS AQUI AAAAA. La ecuacion (\ref{eq:euler2}) es bonita.
+
+\end{document}
