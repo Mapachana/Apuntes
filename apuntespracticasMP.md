@@ -1,4 +1,5 @@
 #Apuntes de MP día 26/02/2018
+
 ## Introducción
 
 Para compilar:
@@ -144,5 +145,32 @@ Se pondrán los includes necesarios y el espacio de nombres.
 
 ## Práctica de esta semana
 Debemos separarlo en 3 ficheros: Intervalo.h Intervalo.cpp main.cpp cada uno en su carpeta y comprimirlas todas para entregarlas.
+
+# Apuntes del 5/3 MP
+
+## Makefile
+Los makefiles sirven para compilar solo lo necesario de forma automatica al hacer cambios.
+La primera regla es la de enlazado. Es necesario tabulador, no espacios.
+Las librerías e includes se ponen al final.
+Si hacemos touch y luego make solo se hacen las ordenes necearias.
+El makefile se ejecuta con make.
+
+## Bibliotecas
+Se crean con ar rvs lib/intervalo.a obj/intervalo.o
+g++ obj/intervalo.o -lintervalo -Llib -o bin/intervalo
+
+/usr/local/include/ para meter bibliotecas del sistema
+
+Los .a enlazan solo las cosas necesarias, el .o mete todo.
+
+## Makefile y macros
+Los comentarios son con #.
+Las macros son variables con valor dentro solamente del makefile.
+EN LOS APUNTES LA PRIMERA REGLA FALTA $(LIB) EN LA LIBRERIA
+
+- -Wall activa los warnings. Se puede poner en una variable OPT
+- -g Le mete en depurador.
+OPT=-Wall -g
+NUNCA SE ENTREGA UN PROYECTO CON LA OPCION -g
 
 _By Mapachana_
