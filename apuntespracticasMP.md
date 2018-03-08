@@ -99,7 +99,7 @@ g++ -o bin/circulomedio obj/punto.o obj/circulo.o obj/central.o
 
 bin/circulomedio < data/circulomedio.dat
 ```
-##Archivos y separaciones
+## Archivos y separaciones
 Normalmente haremos srchivos diferentes para:
 
 - main La función main irá en unn archivo aparte (main.cpp)
@@ -119,14 +119,14 @@ Todos los archivos tendrán al comienzo unas líneas como estas:
  
 Donde se indica en qué archivo se está, quién es el autor del mismo y qué función tiene.
 
-###main.cpp
+### main.cpp
 Contiene la función main, incluyendo las bibliotecas usuales y los .h necesarios:
 ```cpp
 #include<iostream>
 #include "miclase.h"
 using namespace std
 ```
-###miclase.h
+### miclase.h
 Este archivo contendrá las especificaciones, nombres de métodos y funciones.
 No se pondrá los includes usuales (solo e pondrán includes de otros .h de clases necesarias en la clase actual, por ejemplo, una clase circulo que dependa de una clase punto).
 Se suelen añadir estas líneas:
@@ -139,7 +139,7 @@ Se suelen añadir estas líneas:
 #endif
 ```
 Esto evita que se añada un fichero de cabecera dos veces, lo cual da lugar a errores.
-###miclase.cpp
+### miclase.cpp
 En este archivo se encuentran todas las implementaciones de funciones y métodos. En él se debe incluir el .h de la declaración de la clase.
 Se pondrán los includes necesarios y el espacio de nombres.
 
