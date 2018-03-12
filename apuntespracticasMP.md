@@ -1,4 +1,4 @@
-# Apuntes de MP día 26/02/2018
+#Apuntes de MP día 26/02/2018
 
 ## Introducción
 
@@ -99,7 +99,7 @@ g++ -o bin/circulomedio obj/punto.o obj/circulo.o obj/central.o
 
 bin/circulomedio < data/circulomedio.dat
 ```
-## Archivos y separaciones
+##Archivos y separaciones
 Normalmente haremos srchivos diferentes para:
 
 - main La función main irá en unn archivo aparte (main.cpp)
@@ -119,14 +119,14 @@ Todos los archivos tendrán al comienzo unas líneas como estas:
  
 Donde se indica en qué archivo se está, quién es el autor del mismo y qué función tiene.
 
-### main.cpp
+###main.cpp
 Contiene la función main, incluyendo las bibliotecas usuales y los .h necesarios:
 ```cpp
 #include<iostream>
 #include "miclase.h"
 using namespace std
 ```
-### miclase.h
+###miclase.h
 Este archivo contendrá las especificaciones, nombres de métodos y funciones.
 No se pondrá los includes usuales (solo e pondrán includes de otros .h de clases necesarias en la clase actual, por ejemplo, una clase circulo que dependa de una clase punto).
 Se suelen añadir estas líneas:
@@ -139,7 +139,7 @@ Se suelen añadir estas líneas:
 #endif
 ```
 Esto evita que se añada un fichero de cabecera dos veces, lo cual da lugar a errores.
-### miclase.cpp
+###miclase.cpp
 En este archivo se encuentran todas las implementaciones de funciones y métodos. En él se debe incluir el .h de la declaración de la clase.
 Se pondrán los includes necesarios y el espacio de nombres.
 
@@ -172,5 +172,25 @@ EN LOS APUNTES LA PRIMERA REGLA FALTA $(LIB) EN LA LIBRERIA
 - -g Le mete en depurador.
 OPT=-Wall -g
 NUNCA SE ENTREGA UN PROYECTO CON LA OPCION -g
+
+# Apuntes del 12/03
+
+## Primera instalación
+La primera vez que se instale netbeans no incluye soporte para c++,  para instalar un plugin se pulsa en _tools_, _plugins_ y se selecciona el plugin que pone _c/ c++_.
+El programa tiene un carpeta de configuracion en todos los proyectos por defecto y genera el makefile automáticamente.
+
+## Creando un nuevo proyecto
+- Cerrar la pestaña de entrada.
+- Botón derecho en la parte izquiera, _proyecto nuevo_, en  l aventana emergente seleccionamos _c++_, _application_, especificamos el nombre y ruta del proyecto, desmarcamos la opción de generar main automático y _finish_.
+- Ahora copiamos las carpetas _doc, src, zip, includes, data_ con la interfaz grafica y deberán aparecer en las carpetas en la pestaña de la vision fisica (_files_).
+- En _Projects_ tenemos que indicar donde están los .h y .cpp como sigue: En  _headers_ y _source_, botón derecho, _add existing items_ y seleccionamos todos los ficheros que necesitemos. (Si añadimos un fichero equivocado, se le da a _remove from project_, _delete_ lo borrará del ordenador).
+- En el nombre el proyecto botón derecho, _properties_, _c++ compiler_ y vemos las opciones de compilacion (_debug_ o _release_, con o sin depurar) y en _include directories_, _add_, metemos la carpeta includes para que sepa donde estan los ficheros de cabecera, _ok_ y ya está listo para compilar.
+- Copiamos y pegamos las reglas _doxy_ y _zip_ en el makefile, ahora botón derecho en el makefile, _make target_, _add target_ e incluimos los objetivos nuevos.
+## Practica a entregar
+Clase paquete de correos y funciones aparte (hay que decidir tu los pasos de parametros, las declaraciones pueden estar mal).
+No hace falta cambiar el doxy.
+El main no se modifica.
+
+
 
 _By Mapachana_
