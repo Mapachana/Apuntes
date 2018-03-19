@@ -105,6 +105,125 @@ cout << *p << endl;
 ```
 ### Punteros y cadenas
 
+Una cadena de caracteres es un array constante de char con tamaño su longitud más uno. Es considerado un _const char *_. Por ejemplo calculando la longitud de una cadena:
+```cpp
+const char *cadena = "Hola"; //tamaño 5
+const char *p; //p puntero a caracter constante, p es modificable
+int i = 0;
+for (p=cadena;*p!='\0';p++)
+++i;
+cout << "Longitud: " << i << endl;
+```
+```cpp
+const char *cadena = "Hola Adiós";
+cout << "Original: " << cadena << endl;
+<< "Sin la primera palabra: " << cadena+5;
+//Escribe Hola Adios y luego Adios, normalmente escribiría la dirección de memoria a la que apunta, pero muestra por pantalla el contenido ya que está apuntando a una cadena de char (esto pasa siempre, es una excepción). Si pusiéramos *cadena sólo mostraría la primera h, ya que apunta a la primera letra. Si quisiéramos que mostrara la dirección de memoria pondríamo (char *) cadena
+```
+Si lo delcaramos con corchetes se puede cambiar un carácter, si se declara como puntero no se pueden modificar caracteres ya que está apuntando a caracteres constantes.
+
+### Punteros y struct o class
+
+También pueden apuntar a structs o class.
+Un puntero apunta al primer dato del struct o clase de ese clase y se accede a sus datos como _(\*puntero).dato_ y a métodos como _(\*puntero).método()_.
+
+Podemos usar el operador -> para acceder a datos miembros _(\*p).miembro_ o _p->miembro_.
+Una clase puede tener punteros como miembros, pueden apuntar a otro dato de la misma clase que estamos definiendo, por ejemplo en el caso de una clase persona, un puntero que apunta a su pareja. Pueden dereferenciarse varios punteros (si un puntero apunta a otro puntero es válido usar esto:)
+```cpp
+ptr->pareja->nombre //El puntero accede a otro puntero que accede al nombre.
+```
+###Punteros y funciones
+
+Un puntero puede ser un parámetro de funciones, es similar al paso po referencia.
+También podemos modificar un puntero pasando por referencia el puntero
+```cpp
+void funcion (int *p) //Pasa puntero como argumento.
+void funcion (int* & p) //Pasa puntero como argumento POR REFERENCIA
+int* doble(int x) //Devuelve un puntero.
+```
+No se pueden devolver punteros a una variable local a la función, ya que la variable se dedstruye al acabar la función.
+```cpp
+int* ptr, ptr2 //ptr es puntero, ptr2 es entero.
+int *ptr, ptr2; //lo mismo
+int *ptr, *ptr2 //Ambos punteros
+```
+### Punteros a Punteros
+
+```cpp
+int a = 5;
+int *p; //Puntero a entero.
+int **q; //Puntero a puntero a entero.
+p = &a;
+q = &p;
+//Para acceder al valor de a sirve a, *p, **q
+```
+### Punteros y const
+Tenemos el dato al que apunta el puntero y el puntero, para definir constantes:
+```cpp
+double *p //Ninguno constante
+const double *p //El dato apuntado es constante
+double const *p //El dato apuntado es constante
+double *const p=<valor> //El puntero es constante
+const double *const p //Ambos son constantes
+dpuble const *const p //Ambos son constantes
+```
+Un puntero a dato no constante no puede apuntar a un dato constante (permitiría cambiar el valor de una constante mediante el puntero).
+
+Podemos llamar a una función que espera un puntero a dato constante con un puntero a dato no constante.
+
+### Arrays de punteros
+Es un array con sus elementos punteros.
+```cpp
+int* arrayPunts[4];
+int a=5, b=7, c=3, d=2;
+arrayPunts[0]=&a;
+arrayPunts[1]=&b;
+arrayPunts[2]=&c;
+arrayPunts[3]=&d;
+for (int i = 0; i<4; i++){
+	cout << *arrayPunts[i] << " ";
+}
+cout << endl;
+``` 
+Por ejemplo, para ordenar un array sin modificafr el array se crea un array de punteros con tantos punteros como el array a ordenar, donde cada puntero apunta al valor de su misma posición y se ordenan los punteros en lugar de los valores.
+Podemos tener un array de punteros a cadenas esstilo C.
+```cpp
+const char*  constpalosBaraja[4]={"Oros","Copas", "Espadas", "Bastos"};
+cput << "Palos de la Baraja: ";
+for (int i = 0; i<4; i++)
+	cout << oalosBaraja[i] << " ";
+cout << endl;
+```
+Ahora declararemos el main como:
+```cpp
+int main ( char* argv[], int argc)
+```
+Esto sirve para que al ejecutar un programa pasándole ficheros por la terminal, el nombre de estos ficheros se guarde en el array que recibe como parámetro main.
+_argv_ es un array de cadenas de C.
+_argv[0]_ es el nombre del ejecutable, _argv[1]_ escribe el primer fichero que recibe y así sucesivamente.
+_argc_ almacena el tamaño del array.
+
+Para leer datos de un fichero se usa una variable de tipo ifstream 
+```cpp
+int entero;
+ifstream flujo;
+flujo.open(argv[1]);
+flujo >> entero;
+```
+### Punteros a funciones
+Es un puntero que contiene la dirección de memoria de una función. Estos punteros se pueden pasar como parámetro a otra función o ser devuelto o hacer un array de punteros a funciones, asignarlos a otras variables o se usan para ejecutar la función a la que apuntan.
+Al darle un valor, se le da como valor el nombre de una función.
+```cpp
+bool ( *comparar )( int, int)
+//comparar es un puntero que puede apuntar a cualquier función que reciba como parametros dos enteros y devuelva un booleano.
+//Si no se usan los paréntesis en *comparar estaríamos declarando una función que devuelve un puntero a bool y recibe dos enteros.
+(*comparar)(valor1,valor2); //Accede a la función
+```
+Son útiles para, por ejemplo, con una sola función hacer una función que ordene un array de mayor a menor o de menor a mayor.
+
+
+
+
 
 
 _By Mapachana_

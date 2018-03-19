@@ -191,6 +191,19 @@ Clase paquete de correos y funciones aparte (hay que decidir tu los pasos de par
 No hace falta cambiar el doxy.
 El main no se modifica.
 
+# Apuntes 19/3
+
+## Gestión de bibliotecas
+Se usan cuando el tamaño del binario importa o cuando se reutiliza código.
+Trabajaremos con _circulomedio_nb_.
+
+- Abriremos un nuevo proyecto, en c/c++ biblioteca estática.
+- Creamos las carpetas _include_ y _src_ y copiamos los archivos de cabecera y los de código salvo el main. Ahora añadimos al proyecto dichos archivos indicándole donde están.
+- Si se da a limpiar y construir genera la biblioteca.
+- Se meten en una carpeta del sistema, generalmente _local_.
+-En ropiedades, _linker_, directorio de biblioteca y la biblioteca a usar  y _add library_ y seleccionamos la biblioteca a usar. Ahora ya se pueden poner _<>_ en los includes, y no _""_.
+
+
 
 
 _By Mapachana_
