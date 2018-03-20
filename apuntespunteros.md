@@ -221,6 +221,134 @@ bool ( *comparar )( int, int)
 ```
 Son útiles para, por ejemplo, con una sola función hacer una función que ordene un array de mayor a menor o de menor a mayor.
 
+### Errores comunes con punteros
+- Asignar punteros a distinto tipo (puntero entero que intenta apuntar a puntero a carácter).
+- Usar de punteros no inicializados.
+- Asignar valores al puntero y no a la variable.
+
+## Gestión de memoria dinámica
+### Estructura de la memoria
+Un SO divide la memoria en varias partes:
+
+- Segmento de código: Donde está el código del programa.
+- Memoria estática: Memoria reservada antes de ejecutar un programa (es fija) donde se guardan las variables globales y las _static_ (Locales a una función: solo se le asigna el valor inicializador una vez (la primera que se entra; A una clase en _public_: es como una variable global de la clase, es la misma para todos los objetos).
+- Pila: Aquí se guardan las variables locales de las funciones. por cada función se reserva un _entorno de programa_.
+- El _heap_: Se reservan y liberan trozos según las necesidades, esta es la única zona que maneja el programador. Sirve para crear nuevas variables o variables con tamaño indeterminado.
+
+### Gestión dinámica de la memoria
+- Se pide al SO un trozo de la memoria (tamaño) .
+- El SO comprueba si hay suficiente espacio libre en el _heap_.
+- Si hay espacio suficiente, el SO devuelve la posición de memoria donde se ha reservado y marca la zona como ocupada.
+- La ubicación de la memoria se almacena en una variable estática o local puntero.
+```cpp
+int *p2;
+p2 = new int[200]; //Almacena la direccion de memoria
+```
+- La zona de memoria reservada puede allmacenar nuevas variables dinámicas que pueden almacenar la dirección de nuevas peticiones de reserva de memoria.
+- Se libera la memoria dinámica que ya no necesitamos.
+
+### Operador _new_
+Reserva en el _heap_ memomria suficiente del tipo especificado.
+```cpp
+<tipo> *p;
+p = new <tipo>;
+```
+Si no hay espacio suficiente para reservar esa memoria se provocaría una excepción y el programa termina.
+```cpp
+int *p;
+p = new int;
+*p = 10;
+//Se reserva memoria para un entero.
+```
+
+### Operador _delete_
+Sirve para liberar la memoria que ya no es necesaria.
+```cpp
+delete puntero
+```
+```cpp
+int *p, q = 10;
+p = new int;
+*p = q;
+//Aquí más código.
+delete p;
+```
+
+### Objetos dinámicos compuestos
+Se reservan _structs_ y _class_ de forma igual a datos simples.
+
+- _new_ reserva la memoria y llama al constructor de la clase para inicializar los objetos.
+- _delete_ llama al destructor de la clase y después libera la memoria de cada campo del objeto.
+```cpp
+class Estudiante {
+string nombre;
+int nAsignaturasMatricula;
+vector<int> codigosAsignaturasMatricula;
+public:
+Estudiante();
+Estudiante(string name);
+void setNombre(string nuevoNombre);
+string getNombre() const;
+void insertaAsignatura(int codigo);
+int getNumeroAsignaturas() const;
+int getCodigoAsignatura(int index) const;
+//Más métodos aquí
+};
+
+int main() {
+Estudiante* ramon;
+ramon=new Estudiante("Ramón Rodríguez Ramírez"); //Llama al constructor necesario de acuerdo a los parámetros que se le den.
+ramon->insertaAsignatura(302);
+ramon->insertaAsignatura(307);
+ramon->insertaAsignatura(205);
+//Más código aquí
+delete ramon;
+}
+
+```
+### Arrays dinámicos
+Usando arrays dinámicos podemos crear arrays justo del tamaño necesario y justo en el momento necesario y destruirlos después.
+Para ello usaremos [] en los operadores usuales.
+```cpp
+<tipo> *p;
+p = new <tipo> [numeroareservar]; //num debe ser mayor que 0
+delete[] p;
+```
+```cpp
+//Programa donde se crea array dinámico (con un puntero que se trata como array)
+int *v = 0, n;
+cout << "Número de casillas: ";
+cin >> n;
+v = new int [n];
+
+for (int i = 0;  i < n;  i++) {
+	cout << "Valor en casilla " << i <<  ": ";
+	cin >> v[i];
+}
+cout << endl;
+
+for (int i = 0; i < n; i++)
+	cout << "En la casilla " << i << " guardo: "<< v[i] << endl;
+
+delete [] v;
+v = 0;
+```
+```cpp
+//Función para redimensionar un array dinámico.
+void redimensionar (int *&v, int& tama, int aumento){
+	if (tama+aumento > 0){
+		int *v_ampliado = new int[tama+aumento];
+		for (int i = 0; (i < tama) && (i < tama+aumento); i++)
+			v_ampliado[i] = v[i];
+		delete[] v;
+		v = v_ampliado;
+		tama = tama+aumento;
+	}
+}
+```
+
+### Arrays dinámicos de objetos
+Funciona igual que con un tipo de dato nativo, salvo que se usa el constructor por defecto obligatoriamente al inicializar los datos de la memoria reservada.
 
 
 
