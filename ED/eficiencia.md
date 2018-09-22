@@ -32,7 +32,7 @@ Otro ejemplo: 3n^3^+2n^2^ es O(n^3^) con n~0~=0 y c= 5
 otro ejemplo: 225 es O(1)
 
 ### Jerarquía de funciones
-![](/home/ana/Escritorio/Universidad/2_SEGUNDO/1_Cuatri/ED/tema_1/img_18_09/jerarquia.png) 
+![](./img_18_09/jerarquia.png) 
 ### Reglas simples
 - Transitividad:
 $$f(n)\rightarrow O(g(n)) ; g(n) \rightarrow O(h(n)) \longrightarrow f(n) \rightarrow O(h(n))$$
