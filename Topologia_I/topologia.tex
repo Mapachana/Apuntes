@@ -50,6 +50,7 @@
 % MÁRGENES
 \usepackage[margin=2.5cm, top=3cm]{geometry}
 
+
 % LISTAS
 \usepackage{enumitem}       % Mejores listas
 \setlist{leftmargin=.5in}   % Especifica la indentación para las listas.
@@ -453,17 +454,97 @@ $\{x\}\subset X$ quiere decir que $\{x\}$ es un conjunto, en este caso unitario 
 $$x\in X \equiv \{x\}\subset X$$
 
 \subsection{Operaciones con conjuntos}
+\begin{ndef} \textbf{Operaciones de conjuntos.}
 Sean $A,B$ subconjuntos de un conjunto $X$, entonces:
 \begin{itemize}
-\item Unión: $A\cup B=\{x\in X / x\in A o x\in B\}$.
-\item Intersección: $A\cap B=\{x\in X / x\in A y x\in B\}$. Si no hay intersección se dice que es vacía, y se simboliza por $\emptyset$
-
-
+\item Unión: $A\cup B=\{x\in X \diagup x\in A o x\in B\}$.
+\item Intersección: $A\cap B=\{x\in X \diagup x\in A y x\in B\}$. Si no hay intersección se dice que es vacía, y se simboliza por $\emptyset$
+\item Complementario: $X-A=\{x\in X\diagup x\not\in A$ siendo A subconjunto de X.
 \end{itemize}
+\end{ndef}
+
+\begin{nprop}
+\textbf{Propiedades.}
+Sean $A,B,C\subset X$ conjunto:
+\begin{itemize}
+\item Asociativa:
+\begin{equation}
+\begin{split}
+(A\cup B)\cup C = A\cup (B\cup C) \\
+(A\cap B) \cap C = A\cap (B\cap C)
+\end{split}
+\end{equation}
+\item Conmutativa:
+\begin{equation}
+\begin{split}
+A\cup B = B\cup A \\
+A\cap B = B\cap A
+\end{split}
+\end{equation}
+\item Distributiva:
+\begin{equation}
+\begin{split}
+A\cap(B\cup C) = (A\cap B)\cup (A\cap C) \\
+A\cup (B\cap C) = (A\cup B)\cap (A\cup C)
+\end{split}
+\end{equation}
+\item Propiedades del complementario:
+\begin{itemize}
+\item $A\cup (X-A) = X$
+\item $A\cap (X-A) = \emptyset$
+\end{itemize}
+\end{itemize}
+\end{nprop}
+
+\begin{nth}
+\textbf{Leyes de De Morgan}
+De Morgan hizo dos afirmaciones, siendo $A,B\subset X$:
+\begin{nlist}
+\item $X-(A\cup B) = (X-A)\cap(X-B)$
+\item $X-(A\cap B)= (X-A)\cup(X-B)$
+\end{nlist}
+\end{nth}
+\begin{proof}Demostración de las Leyes de De Morgan.
+\begin{nlist} 
+\item Demostración de la primera propiedad:
+\begin{equation}
+\begin{split}
+Sea\hspace{0.25cm}x\in X-(A\cup B) \Leftrightarrow x\not\in (A\cup B)\\
+\Leftrightarrow x\not\in A \hspace{0.25cm}y\hspace{0.25cm} x\not\in B \\
+\Leftrightarrow x\in X-A \hspace{0.25cm}y\hspace{0.25cm} x\in X-B \\
+\Leftrightarrow x\in(X-A)\cap(X-B)
+\end{split}
+\end{equation}
+\item Demostración de la segunda propiedad:
+\begin{equation}
+\begin{split}
+Sea\hspace{0.25cm}x\in X-(A\cap B) \Leftrightarrow x\not\in (A\cap B)\\
+\Leftrightarrow x\not\in A \hspace{0.25cm}o\hspace{0.25cm} x\not\in B \\
+\Leftrightarrow x\in X-A \hspace{0.25cm}o\hspace{0.25cm} x\in X-B \\
+\Leftrightarrow x\in(X-A)\cup(X-B)
+\end{split}
+\end{equation}
+\end{nlist}
+\end{proof}
+
+
+
 
 \pagebreak
 
 \section{Tema 1}
+
+\begin{ejer}
+Esto es un ejer.
+Jeje.
+\end{ejer}
+\begin{sol}
+Esto es la solucion.
+jaja
+\end{sol}
+En muchas situaciones interesa hacer un estudio simúltaneo de más de un
+carácter en una población. Así podemos hallar relaciones entre las distintas
+características que estudiemos.
 
 
 
