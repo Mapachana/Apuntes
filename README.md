@@ -18,3 +18,6 @@ De momento aquí hay una lista de apuntes que me parecen útiles:
 - De la asignatura Topología I:
 	- [Apuntes]( https://github.com/Mapachana/Apuntes/blob/master/Topologia_I/topologia.tex )
 
+- De la asignatura de EC, donde se trabaja con ensamblador:
+	- [Apuntes]( https://github.com/Mapachana/Ensamblador )
+
