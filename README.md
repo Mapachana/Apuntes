@@ -16,7 +16,8 @@ De momento aquí hay una lista de apuntes que me parecen útiles:
 	- [ApuntesEficiencia]( https://github.com/Mapachana/Apuntes/blob/master/ED/eficiencia.md )
 	
 - De la asignatura Topología I:
-	- [Apuntes]( https://github.com/Mapachana/Apuntes/blob/master/Topologia_I/topologia.tex )
+	- [Apuntes en LaTeX]( https://github.com/Mapachana/Apuntes/blob/master/Topologia_I/topologia.tex )
+	- [Apuntes escaneados] ( https://github.com/Mapachana/Apuntes/blob/master/Topologia_I/Escaneados )
 
 - De la asignatura de EC, donde se trabaja con ensamblador:
 	- [Apuntes]( https://github.com/Mapachana/Ensamblador )
