@@ -15,6 +15,10 @@
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+% ELIMINAR WARNINGS DE ESPACIADO
+\hbadness=99999  % or any number >=10000
+\hfuzz=9999pt
+
 % ---------------------------------------------------------------------------
 % CONFIGURACIÓN BÁSICA DEL DOCUMENTO
 % ---------------------------------------------------------------------------
@@ -526,6 +530,96 @@ Sea\hspace{0.25cm}x\in X-(A\cap B) \Leftrightarrow x\not\in (A\cap B)\\
 \end{equation}
 \end{nlist}
 \end{proof}
+
+\begin{ndef}\textbf{Partes de X.}
+Sea X un conjunto las partes de X se denota como $\mathcal{P}(X)$ y se define:
+$\mathcal{P}(X)=\{A:A\subset X\}$ \\
+Además $\{A_a:a\in\mathcal{A}\}\subset\mathcal{P}(X)$
+\end{ndef}
+
+\begin{ndef}\textbf{Funciones.}
+Sea $f:X\rightarrow Y$ donde X,Y son conjuntos.
+\begin{itemize}
+\item f es inyectiva si $\forall x\neq y \Rightarrow f(x)\neq f(y)$
+\item f es sobreyectiva si $\forall y\in Y, \exists x\in X : f(x)=y$
+\item f es biyectiva si es inyectiva y sobreyectiva.
+\end{itemize}
+\end{ndef}
+
+\begin{ndef}\textbf{Inversa:}
+Si f es biyectiva definimos su inversa como: $f^{-1}:Y\rightarrow X$ cumpliendo:
+\begin{itemize}
+\item $f\circ f^{-1}=Id_Y$
+\item $f^{-1}\circ f = Id_X$
+\end{itemize}
+Entonces $f^{-1}(y)=x$ y $f(x)=y$
+\end{ndef}
+
+\begin{nprop}\textbf{Operaciones en dimensión infinita}
+Sea $\mathcal{A}$ un conjunto de índices cualquiera y sea $\{A_a : a\in\mathcal{A}\}$ subconjuntos de X entonces:
+\begin{itemize}
+\item $\underset{a\in\mathcal{A}}{\cup}A_a = \{x\in X : \exists a\in\mathcal{A}\hspace{0.25cm} tq\hspace{0.25cm}x\in A_a \}$
+\item $\underset{a\in\mathcal{A}}{\cap}A_a = \{x\in X : \forall a\in\mathcal{A}, x\in A_a \}$
+\end{itemize}
+\end{nprop}
+
+\begin{nprop}\textbf{Propiedades}
+\begin{nlist}
+\item $B\cup\left(\underset{a\in\mathcal{A}}{\cap}A_a\right)=\underset{a\in\mathcal{A}}{\cap}\left(B\cup A_a\right)$
+\item $B\cap\left(\underset{a\in\mathcal{A}}{\cup}A_a\right)=\underset{a\in\mathcal{A}}{\cup}\left(B\cap A_a\right)$
+\item $X-\underset{a\in\mathcal{A}}{\cup}A_a=\underset{a\in\mathcal{A}}{\cap}(X-A_a)$
+\item$X-\underset{a\in\mathcal{A}}{\cap}A_a=\underset{a\in\mathcal{A}}{\cup}(X-A_a)$
+\item $f\left(\underset{a\in\mathcal{A}}{\cap}A_a\right)\subset\underset{a\in\mathcal{A}}{\cap}f(A_a)$
+\item $f(A)-f(B)\subset f(A-B)=f(A\cap (X-B))$
+\end{nlist}
+\end{nprop}
+
+\begin{proof}
+\begin{nlist}
+\item
+\begin{equation}
+\begin{split}
+B\cup\left(\underset{a\in\mathcal{A}}{\cap}A_a\right) \Leftrightarrow x\in B\hspace{0.25cm} o \hspace{0.25cm} x\in\underset{a\in\mathcal{A}}{\cap}A_a \\
+\Leftrightarrow x\in B\hspace{0.25cm} o \hspace{0.25cm}\left(\forall a\in\mathcal{A}, x\in A_a\right) \\
+\Leftrightarrow \forall a\in\mathcal{A}\hspace{0.1cm} (x\in B\hspace{0.25cm}o\hspace{0.25cm}x\in A_a) \\
+\Leftrightarrow \forall a\in\mathcal{A}\hspace{0.1cm} x\in B\cup A_a \\
+\Leftrightarrow \underset{a\in\mathcal{A}}{\cap}\left(B\cup A_a\right)
+\end{split}
+\end{equation}
+\item
+\begin{equation}
+\begin{split}
+aqui
+\end{split}
+\end{equation}
+\item
+\begin{equation}
+\begin{split}
+aqui
+\end{split}
+\end{equation}
+\item
+\begin{equation}
+\begin{split}
+aqui
+\end{split}
+\end{equation}
+\item
+\begin{equation}
+\begin{split}
+aqui
+\end{split}
+\end{equation}
+\item
+\begin{equation}
+\begin{split}
+aqui
+\end{split}
+\end{equation}
+\end{nlist}
+\end{proof}
+
+
 
 
 
