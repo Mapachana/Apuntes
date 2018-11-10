@@ -223,7 +223,7 @@ En ambos casos el último argumento o último componente debe ser NULL.
 
 `int execv (const char *path, char *const argv[])`
 
-para hacer llamadas al sistema de suele usar execlp: `execlp("ls","ls",NULL)`
+Para hacer llamadas al sistema de suele usar execlp: `execlp("ls","ls",NULL)`
 
 ### clone
 
