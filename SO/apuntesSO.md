@@ -223,6 +223,8 @@ En ambos casos el último argumento o último componente debe ser NULL.
 
 `int execv (const char *path, char *const argv[])`
 
+para hacer llamadas al sistema de suele usar execlp: `execlp("ls","ls",NULL)`
+
 ### clone
 
 > Falta añadirlooooo
@@ -384,6 +386,8 @@ La llamada al sistema dup2 permite una atomicidad en las operaciones sobre dupli
 `dup2(fd[1],STDOUT_FILENO)`
 
 *Nota: Debe hacerse pipe antes de realizar un dup.*
+
+*Nota: 0 es la entrada estándar, 1 la escritura estándar y 2 la salida de error estándar.*
 
 ## Sesión 6: Control de archivos y archivos
 
@@ -575,7 +579,7 @@ Una proyección anónima es similar a una proyección de archivo salvo que no ex
 
 > Falta el último apartado que está en las páginas 159, 160
 
-
+*Nota: ftruncate(int fd, int i) trunca el archivo indicado por fd al tamaño indicado i, si el tamaño indicado es mayor que el tamaño del archivo su contenido se rellena como nulos.*
 
 ## Cosas extras
 
@@ -585,3 +589,7 @@ Quiza hay que meter el stdlib, string.h en alguna tarea que falta incluso de fab
 printf("Bloque num %d", i)
 sprintf(buf1, "blque num %d", i)
 write(fd, buf1, strlen(buf1))
+
+### Leer de entrada estándar
+
+scanf()
