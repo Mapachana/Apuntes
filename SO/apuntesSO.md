@@ -63,7 +63,7 @@ stat en consola muestra los metadatos.
 lstat o stat en c es una orden que devuelve los metadatos, y por ejemplo:
 `stat(archivo, &atributos)` guarda los atributos de archivo en atributos. (Donde atributos es definido _struct stat_)
 
-Además tenemos flags predefinidas como *S_IFREG* que pasandole un _struct stat_ con el método *.st__mode* nos devuelven verdadero o falso a si es REGular, DIRectorio.... (`S_IFREG(atributos.st_mode)`)
+Además tenemos flags predefinidas como *S_IFREG* que pasandole un _struct stat_ con el método *.st__mode* nos devuelven verdadero o falso a si es REGular, DIRectorio.... (`S_ISREG(atributos.st_mode)`)
 
 Todas estas flags están en el guión de la práctica páginas 80 y 81.
 
@@ -78,6 +78,8 @@ Además en atributos, una vez cargados los datos (hecho stat) podemos acceder a 
 - uid_t st_uid : UID del usuario propietario.
 
 Hay más, están todas disponibles en la página 82 del guión de prácticas.
+
+*Nota: La diferencia entre stat y lstat es únicamente que en el caso de que se trate un enlace simbólico, en cuyo caso stat examina el fichero al que apunta el enlace mientras lstat estudia el enlace mismo, no el fichero al que hace referencia.*
 
 ### Macros
 
@@ -404,6 +406,9 @@ Donde el argumento orden admite un rango de operaciones a realizar sobre el desc
 - F_GETFD : Devuelve la bandera _close-on-exec_ del archivo (0 si está desactviada y otro número en caso contrario). Este flag suele estar desactivado por defecto. Si esta bandera está activa en un descriptor al usar la llamada a exec el proceso hijo no heredará el descriptor.
 - F_SETFD : Activa o desactiva la bandera _close-on-exec_ del archivo. El tercer argumento val e0 para limpiar la bandera y 1 para activarla.
 - F_DUPFD : Duplica el descriptor de archivo de fd en otro descriptor. El tercer argumento es un entero que especifica que el descriptor duplicado debe ser mayor o igual que dicho valor entero. Devuelve el descriptor de archivo duplicado.
+- F_SETLK : Establece un cerrojo sobre un archivo. No bloquea si no tiene éxito inmediatamente.
+- F_SETLKW : Establece un cerrojo y bloquea al proceso llamador hasta que se adquiere el cerrojo.
+- F_GETLK : Consulta si existe un bloqueo sobre una región del archivo.
 
 La lista completa está en la página 140 del guión.
 
@@ -547,7 +552,7 @@ Un archivo proyectado en memmoria es una técnica para acceder a archivos en lug
 
   - PROT_NONE : No podemos acceder a los datos.
 
--   flags : Vale (página 152):
+- flags : Vale (página 152):
 
   - MAP_PRIVATE : Los cambios son privados (solo los ve el proceso que los hizo).
 

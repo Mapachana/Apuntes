@@ -1,4 +1,5 @@
 // By Mapachana
+// Enunciado en: https://github.com/Mapachana/Apuntes/blob/master/SO/examenes/SO_Examen2015_Modulo2_Mar%C3%ADaAngustiasS%C3%A1nchezBuend%C3%ADa.pdf
 
 #include <stdio.h>
 #include <signal.h>
