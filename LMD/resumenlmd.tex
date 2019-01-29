@@ -4,6 +4,7 @@
 \usepackage{geometry}
 \usepackage{amsfonts}
 \usepackage{amsmath}
+\usepackage{amsthm}
 \usepackage{xcolor}
 \usepackage{hyperref}
 \usepackage{enumerate}
@@ -207,17 +208,90 @@
 \newcolumntype{F}{>{\collectcell\MyBoxFirstColumn}c<{\endcollectcell}}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-
+% Comandos de Alejandro %
+\theoremstyle{plain} \newtheorem{PrimerPrincipio}{Teorema}
+\theoremstyle{plain} \newtheorem{SegundoPrincipio}{Teorema}
 \begin{document}
 \maketitle
 %\tableofcontents
 
 
 \section{Inducción}
-\subsection{Principio de inducción}
-%Esto es texto.
+
+En esta sección se introduce el concepto de \emph{inducción matemática}, una herramienta para demostrar teoremas o simplemente que una propiedad se cumple en todos los números \emph{naturales}. Es muy importante tener clara la ``literatura" de esta parte del temario.
+
+\subsection{Principios de inducción finita}
+
+Este primer principio de inducción se basa directamente en el \emph{quinto axioma de Peano}, conocido también como el axioma de inducción, que dice así:
+
+\begin{itemize}
+				\item Si $P\subseteq\omega$, y cumple que:
+								\begin{itemize}
+												\item $0 \in P$
+												\item si $n \in P$, entonces $s(n) \in P$. ($s(n)=n+1$, es la \emph{función sucesor})
+								\end{itemize}
+\end{itemize}
+Entonces se tiene $P = \omega$
+
+Este fundamento es el que vamos a usar en nuestros ejercicios, llamaremos $P$ al conjunto de los naturales que cumplan lo que queremos demostrar, y probaremos que este conjunto es igual al conjunto de \emph{todos} los naturales.
+
+En nuestros ejercicios primero definiremos una proposición $P(i)$ donde $i$ es una variable libre, y procederemos a probar que $\forall i P(i)$. Lo haremos mediante el siguiente teorema:
+
+\begin{PrimerPrincipio}[Primer Principio de Inducción Finita]
+				Sea $P(i)$ una proposición e $i_0$ un número natural. Supongamos:
+				\begin{itemize}
+								\item $P(i_0)$ (Caso base)
+								\item Si $P(i)$ (Hipótesis de Inducción), entonces $P(i+1)$ (Paso de Inducción).
+				\end{itemize}
+				Entoces $P(i)$ para todo $i$ natural.
+\end{PrimerPrincipio}
+
+Esta no es la única forma de probar una propiedad por inducción. Mediante un desarrollo teórico del Primer pricipio se prueba que \emph{todo conjunto de naturales tiene mínimo } (Principio de buena ordenación de $\mathbb{N}$) y también se prueba el siguiente Teorema:
+
+\begin{SegundoPrincipio}[Segundo Principio de Inducción Finita]
+				Sea $P(i)$ una proposición e $i_0$ un número natural. Si para todo natural $n$, se cumple $P(i)$ para $i_0 \le i < n$, entonces se tiene $P(i)$ para todo $i > i_0$
+\end{SegundoPrincipio}
+
+En otras palabras, para trabajar con este principio, \emph{suponemos} que la propiedad se cumple para los números menores que $n$ y probamos que se cumple para $n$.
+
+\subsection{Ejemplos de aplicación}
+
+\subsubsection*{Ejemplo 1: Primer Principio.} \emph{Pruebe que el producto de tres naturales consecutivos es divisible por 6.}\\
+
+\emph{Solución.} Sea $P(i): ``6 \text{ divide a } i\cdot(i+1)\cdot(i+2)"$, se tiene que:
+\begin{equation*} \tag{Caso base}
+	P(0) = 0,\quad \frac{0}{6}=0
+\end{equation*}
+
+Ahora vamos a usar la siguiente propiedad:
+\begin{itemize}
+				\item Sean $a$ y $b$ múltiplos de un número $k \in \omega$, entonces $a - b$ es múltiplo de $k$.
+\end{itemize}
+
+Suponemos que se tiene $P(i)$, hemos de probar que entonces también se tiene $P(i+1)$:
+
+\begin{align*}
+				P(i+1) - P(i) &{}=  (i+1)(i+2)(i+3) - i(i+1)(i+2)\\
+											 &= (i+1)(i+2)(i + 3 - i)\\
+											 &= 3(i+1)(i+2)
+\end{align*}
+
+Tenemos que, al ser conseutivos, o bien $i+1$ es par o bien $i+2$ es par, en cualquiera de los casos, se tiene que $P(i+1) - P(i)$ es divisible por $6$. Por nuestra hipótesis de inducción sabemos que 6 divide a $P(i)$, de aquí se deduce que 6 divide a $P(i+1)$, como se quería.
+
+Por el primer principio de inducción finita se tiene $P(i)$ para todo $i\in\omega$. $\qed$
+
+\subsubsection*{Ejemplo 2: Segundo Principio.} \emph{Pruebe que todo número natural puede expresarse como producto de primos.}\\
+
+\emph{Solución.} Comenzamos enunciado la propiedad que hemos de probar: $P(i)$: ``$i=p\cdot q$, $p$ y $q$ primos"
+
+Suponemos que se cumple $P(k)$ para todo $0 \le k < i$, ahora probemos que se cumple $P(i)$. Lo haremos mediante un análisis exhaustivo de todos los posibles casos:
+
+\begin{itemize}
+				\item Sea $i$ un número primo, trivialmente, es producto de sí mismo.
+				\item Sea $i$ un número compuesto. Entonces es producto de al menos dos números, $p$ y $q$. Como $p,q < i$, entonces se tiene $P(q)$ y $P(p)$, esto es, son producto de primos. Por lo tanto su producto \emph{también} será producto de primos. Así que se tiene que $i$ es producto de primos.
+\end{itemize}
+
+Aplicando el segundo principio de inducción finita se tiene $P(i)$ para todo $i$ natural.
 
 \section{Recurrencias}
 \subsection{Recurrencias lineales homogéneas}
@@ -226,11 +300,11 @@ $$u_n=a_1u_{n-1}+...+a_ku_k$$
 donde $a_1,...,a_K$ son constantes. Si $a_k$ es distinto de 0, k es el orden de la relación de recurrencia y
 $$p(x)=x^k-a_1x^{k-1}-...-a_k$$
 es su polinomio característico. Si este polinomio se iguala a 0, se obtiene su ecuación característica.
-Para resoolver la recurrencia, calcularemos las solucion de la ecuación característica, obteniendo así raíces. Llamaremos m a la multiplicidad de una raíz (por ejemplo, si una ecuación tiene soluciones 2 y 2, solo tiene una ráiz pero con multiplicidad 2). LLamaremos t al número de raíces.
+Para resolver la recurrencia, calcularemos las soluciones de la ecuación característica, obteniendo así raíces. Llamaremos $m$ a la multiplicidad de una raíz (por ejemplo, si una ecuación tiene soluciones 2 y 2, solo tiene una raíz pero con multiplicidad 2). Llamaremos $t$ al número de raíces.
 Veremos dos casos:
 \begin{itemize}
 \item $k=1$\\
-t=1 m=1
+$t=1$ $m=1$
 $$X_n=\alpha\cdot r^n$$
 \item $k=2$
 \begin{itemize}
@@ -247,10 +321,11 @@ $K_1=2a \quad K_2=-2b$
 \end{itemize}
 Si bien no deberían caer recurrencias de grado mucho mayor de 2, por si acaso, conviene generalizar los casos donde las raíces son reales. La expresión es:
 $$X_n=r_1^n(\alpha_{1,0}+\alpha_{1,1}n+...+\alpha_{1,m-1}n^{m-1})+...+r_t^n(\alpha_{t,0}+\alpha_{t,1}n+...+\alpha_{t,m-1}n^{m-1})$$
-Donde cada m varía para cada raíz.
-Para calcular un recurrencia determinada (nos dan valores de $u_0, u_1,...u_n$ basta sustituir en la expresión el valor de n que nos dan e igualar al número que queremos obtener para ese valor de n e ir despejeando y hallando incógnitas.\\
+Donde cada $m$ varía para cada raíz.
+Para calcular un recurrencia determinada (nos dan valores de $u_0, u_1,\dots u_n$ basta sustituir en la expresión el valor de $n$ que nos dan e igualar al número que queremos obtener para ese valor de $n$ e ir despejando y hallando incógnitas.\\
+
 \large{\textbf{Ejemplo}}
-Resuelva la relación de recurrencia y encuentr la solución particular indicada.
+Resuelva la relación de recurrencia y encuentre la solución particular indicada.
 $$u_{n+2}=6u_{n+1}-9_n$$
 $$u_0=1, u_1=6$$
 Orden de la relación de recurrencia: $k=2$.\\
@@ -258,7 +333,7 @@ Polinomio característico: $x^2-6x+9$.\\
 Ecuación característica: $x^2-6x+9=0$.\\
 Las soluciones de la ecuación característica son: $x_1=x_2=3$. Esto es, tenemos una sola raíz con multiplicidad 2 (la misma raíz aparece 2 veces, es solución doble), luego la solución será de la forma:
 $$X_n=(\alpha_1+\alpha_2n)\cdot 3^n$$
-Donde falta hallar dos incógnitas, que conseguiremos usando los valores que nos dan para la recurrencia particular, si no nos pidieran esto, habríamos acabado el ejercicio.\\
+Donde falta hallar dos incógnitas, que conseguiremos usando los valores que nos dan para la recurrencia particular, si no nos pidieran esto, o no tuviésemos los datos, habríamos acabado el ejercicio.\\
 Para hallar las incógnitas sustituyo los valores de $n$ e igualo al valor que me dan como sigue:
 $$u_0=1=(\alpha_1+\alpha_2\cdot 0)\cdot 3^0;$$
 $$\alpha_1=1$$
@@ -266,22 +341,23 @@ $$u_1=6=(\alpha_1+\alpha_2\cdot 1)\cdot 3^1;$$
 $$6=(1+\alpha_2)\cdot 3;$$
 $$6=3+3\alpha_2;$$
 $$\alpha_2=1$$
-Luego la recurrencia particular es:
+Luego la solución no recurrente es:
 $$X_n=(1+n)\cdot 3^n$$
 
 \subsection{Recurencias lineales no homogéneas}
 Estas recurrencias son de la forma:
 $$u_n=a_1u_{n-1}+...+a_ku_k+f(n)$$
-Donde f(n) está formada por dos partes:
+Donde $f(n)$ está formada por dos partes:
 \begin{itemize}
-\item q(n): Es un polinomio que va multiplicando.
-\item S: Es un número que va elevado a n.
+\item $q(n)$: Es un polinomio que va multiplicando.
+\item $S$: Es un número que va elevado a $n$. \emph{Solo a $n$, si es por ejemplo $3^{n+1}$, habría que descomponerlo.}
 \end{itemize}
 Esto es: $f(n)=q(n)\cdot S^n$
-Para resolver estas recurrencias calcularemos dos cosas: La solución a la recurrencia lineal homogénea asociada (quitando el f(n)) que será $\{X_n^{(h)}\}$ y la solución $\{X_n^{(p)}\}$ que, al sumarlas, nos dará la solución de la recurrencia.
-Para calcular $\{X_n^{(p)}\}$ Simplemente localizaremos S y q(n) por separado y comprobaremos si S es una solución de la ecuación homogénea asociada, m será la multiplicidad de S en las raíces de la ecuación. Llamaremos por ejemplo g al grado de q(n), entonces:
+Para resolver estas recurrencias calcularemos dos cosas: La solución a la recurrencia lineal homogénea asociada (quitando el $f(n)$) que será $\{X_n^{(h)}\}$ y la solución $\{X_n^{(p)}\}$ que, al sumarlas, nos dará la solución de la recurrencia.
+Para calcular $\{X_n^{(p)}\}$ Simplemente localizaremos $S$ y $q(n)$ por separado y comprobaremos si $S$ es una solución de la ecuación homogénea asociada, $m$ será la multiplicidad de $S$ en las raíces de la ecuación. Llamaremos por ejemplo $g$ al grado de $q(n)$, entonces:
 $$\{X_n^{(p)}\}=n^m\cdot (c_1+c_2n+...+c_gn^g)\cdot S^n$$
-Para calcular las constantes del polinomio $c_1,c_2,...,c_n$ se sustituirá la solución en la recurrencia variando n de acuerdo a la expresión y se resolverá el sistema o ecuación para calcular estos valores.\\
+Es decir, un polinomio de igual grado. Para calcular las constantes del polinomio $c_1,c_2,...,c_n$ se sustituirá la solución en la recurrencia variando $n$ de acuerdo a la expresión y se resolverá el sistema o ecuación para calcular estos valores.\\
+
 \large{\textbf{Ejemplo}}
 Resuelva la relación de recurrencia:
 $$u_{n+2}=-4u_{n+1}-3u_n+5(-2)^n$$
@@ -297,7 +373,7 @@ Luego:
 $$q(n)= 5 \quad S=-2$$
 El grado de $q(n)$ es 1 y -2 no es solución de la ecuación característica asociada, por lo que la solución será de la forma:
 $$\{X_n^{(p)}\}=n^0\cdot c\cdot (-2)^n=c\cdot (-2)^n$$
-Donde sólo faltaría hallar c, lo que haremos sustituyendo en la ecurrencia de esta forma:
+Donde sólo faltaría hallar c, lo que haremos sustituyendo en la recurrencia de esta forma:
 $$c(-2)^{n+2}=-4(c(-2)^{n+1})-3(c(-2)^n)+5(-2)^n;$$
 $$c(-2)^2(-2)^n+4c(-2)(-2)^n+3c(-2)^n-5(-2)^n=0;$$
 $$4c(-2)^n-8c(-2)^n+3c(-2)^n-5(-2)^n=0;$$
@@ -314,6 +390,8 @@ Para calcular $\alpha_1$ y $\alpha_2$ necesitaríamos unos valores de n, como $u
 \subsection{Recurrencias no lineales}
 Si cae esto, llorad. Es básicamente probar lo que se te ocurra y tener suerte.
 
+%Nota Alejandro: WTF is this?
+
 %$$\forall \exists \neg \lor \land \models$$
 %$$\mathbb{RNQZMS}$$
 %$$\mathcal{AHX}$$
@@ -322,10 +400,10 @@ Si cae esto, llorad. Es básicamente probar lo que se te ocurra y tener suerte.
 \section{Lógica proposicional}
 \subsection{Introducción}
 Este tema trata básicamente de discernir entre conjuntos de cláusulas satisfacibles e instatisfacibles.\\
-Una cláusula es un conjunto de símbolos, como: $x\\rightarrow y\quad (x\land y)\lor z$
+Una cláusula es un conjunto de símbolos, como: $x\rightarrow y\quad (x\land y)\lor z$
 Primero veremos como trabajar con cláusulas:\\
 Las cláusulas están formadas por los símbolos: $\rightarrow, \neg, \lor, \land, \leftrightarrow, (, )$\\
-Existen aplicaciones sobre las cláusulas que valen 0 o 1, dependiendo de si las satisfacen o no. Sean $\alpha y \beta$ cláusulas y v una aplicación:
+Existen asignaciones, representadas por $v$, sobre las cláusulas que valen 0 o 1, dependiendo de si las satisfacen o no. Sean $\alpha$ y $\beta$ cláusulas y $v$ una asignación:
 \begin{itemize}
 \item $v(\neg\alpha)=v(\alpha)+1$
 \item $v(\alpha\rightarrow\beta)=v(\alpha)v(\beta)+v(\alpha)+1$
@@ -333,13 +411,14 @@ Existen aplicaciones sobre las cláusulas que valen 0 o 1, dependiendo de si las
 \item $v(\alpha\land\beta)=v(\alpha)v(\beta)$
 \item $v(\alpha\leftrightarrow\beta)=v(\alpha)+v(\beta)+1$
 \end{itemize}
+
 \large{\textbf{Ejemplo}}
 Sea $v(\alpha)=1 \quad v(\beta)=0$
 $$v(\neg\alpha)=1+1=0$$
 $$v(\neg\beta)=0+1=1$$
 $$v(\alpha\lor\beta)=1\cdot 0 +1+0=1$$
-Se dirá que un conjunto es satisfacible si existe al menos una aplicación que haga verdaderas todas las cláusulas del conjunto. Será insatisfacible si no es satisfacible.\\
-Para simplificar el algoritmo que usaremos para determinar la satisfacibilidad de un conjunto, pondremos primero las cláusulas en forma normal conjuntiva, para lo que usaremos estas leyes:
+Se dirá que un conjunto es satisfacible si existe al menos una asignación que haga verdaderas todas las cláusulas del conjunto. Será insatisfacible si no es satisfacible.\\
+Para simplificar el algoritmo que usaremos para determinar la satisfacibilidad de un conjunto, pondremos primero las cláusulas en forma normal conjuntiva, o sea, como conjunción ($\land$) de disyunciones ($\lor$) para lo que usaremos estas leyes:
 \begin{itemize}
 \item $(\alpha\land\beta)\equiv(\neg\alpha\rightarrow\beta)\land(\neg\beta\rightarrow\alpha)$
 \item $\alpha\rightarrow\beta\equiv\neg\alpha\lor\beta$
@@ -351,83 +430,88 @@ Para simplificar el algoritmo que usaremos para determinar la satisfacibilidad d
 \end{itemize}
 Transformar una cláusula a su equivalente en forma normal conjuntiva se conseguirá aplicando las reglas anteriores.\\
 Como estrategia general, primero eliminaremos las flechas y luego iremos introduciendo las negaciones, hasta obtener una conjunción de disyunciones.\\
+
 \large{\textbf{Ejemplo}}
 Poner en forma normal conjuntiva: $(a\lor b)\rightarrow(c\lor d)$
 $$(a\lor b)\rightarrow(c\lor d)$$
 $$\equiv\neg(a\lor b)\lor (c\lor d)$$
 $$\equiv (\neg a \land \neg b)\lor(c \lor d)$$
 $$\equiv (\neg a\lor c\lor d) \land (\neg b\lor c \lor d)$$
-Suele ser común que nos pidan que comprobemos si un conjunto $\Gamma\models\gamma$, esto es, comprobar que el conjunto $\Gamma\cup\gamma$ es insatisfacible.
+Suele ser común que nos pidan que comprobemos si un conjunto $\Gamma\models\gamma$, esto es, comprobar que el conjunto $\Gamma\cup\lbrace\neg\gamma\rbrace$ es insatisfacible.
 
 \subsection{Algoritmo de Davis-Putnam}
 Se usa para ver si un conjunto es satisfacible o no aplicando cuatro reglas en orden:
 \begin{enumerate}[I]
 \item Eliminar tautologías, por ejemplo: $\alpha\lor\neg\alpha$. Sólo se hace la primera vez.
-\item Si hay cláusulas unit (formadas por un solo literal, como c, $\neg d$) se coge $\lambda$ y se eliminan todas las cláusulas completas donde aparezca $\lambda$, si queda el conjunto vacío, el conjunto es satisfacible, si no, se coge $\lambda^c$, que es la negada de $\lambda$ y elimina solo la aparición de esta en las claúsulas. Si queda el conjunto vacío el conjunto es insatisfacible.
-\item Se aplica si aparece un literal y no su negado, se eliminan las claúsulas donde aparece dicho literal.
+\item Si hay cláusulas unit (formadas por un solo literal, como $c$, $\neg d$) se coge $\lambda$ y se eliminan todas las cláusulas completas donde aparezca $\lambda$, si queda el conjunto vacío, el conjunto es satisfacible, si no, se coge $\lambda^c$, que es la negada de $\lambda$ y elimina solo la aparición de esta en las claúsulas. Si queda el conjunto vacío el conjunto es insatisfacible.
+\item Se aplica si aparece un literal y no su negado (\emph{literal puro}), se eliminan las claúsulas donde aparece dicho literal.
 \item Se escoge un literal $\lambda$ y su negada $\lambda^c$ y se divide en dos conjuntos, en uno están las claúsulas en las que aparece $\lambda$ y en otro donde aparece $\lambda^c$, en ambos omitiendo los literales elegidos. Las cláusulas en las que no aparezca ninguno, van en ambos conjuntos. El conjunto inicial es insatisfacible si y solo si todos sus subonjuntos lo son.
 \end{enumerate}
 
 \large{\textbf{Ejemplo}}
 Estudiar si $\gamma_1,\gamma_2,\gamma_3\models\varphi$ y dar una aplicación que evidencie el resultado.
-$$\gamma_1=(a\lor b)\rightarrow(c\lor d)$$
-$$\gamma_2=(\neg a\land\neg d)\rightarrow(\neg c\land(c\lor e))$$
-$$\gamma_3= a \rightarrow(\neg c\land\neg b\land(\neg d\lor b))$$
-$$\varphi=(d\rightarrow(b\lor a))\rightarrow(d\land\neg(a\lor\neg b))$$
+$$\gamma_1\equiv(a\lor b)\rightarrow(c\lor d)$$
+$$\gamma_2\equiv(\neg a\land\neg d)\rightarrow(\neg c\land(c\lor e))$$
+$$\gamma_3\equiv a \rightarrow(\neg c\land\neg b\land(\neg d\lor b))$$
+$$\varphi\equiv(d\rightarrow(b\lor a))\rightarrow(d\land\neg(a\lor\neg b))$$
 Comprobar que $\gamma_1,\gamma_2,\gamma_3\models\varphi$ es equivalente a comprobar que $\{\gamma_1,\gamma_2,\gamma_3\neg\varphi\}$ es insatisfacible.\\
 Para ello, primero pondremos todas las fórmulas en forma normal conjuntiva, como sigue:
 
-$$\gamma_1=(a\lor b)\rightarrow(c\lor d)$$
-$$\equiv\neg(a\lor b)\lor (c\lor d)$$
-$$\equiv (\neg a \land \neg b)\lor(c \lor d)$$
-$$\equiv (\neg a\lor c\lor d) \land (\neg b\lor c \lor d)$$
-%vspace{0.5cm}
+%Un nuevo método para que las ecuaciones salgan mucho más bonitas alineándolas justo bajo el igual. By: ~Alejandro~
 
-$$\gamma_2=(\neg a\lor\neg d)\rightarrow(\neg c\land(c\lor e))$$
-$$\equiv\neg(\neg a\land\neg d)\lor(\neg c\land(c\lor e))$$
-$$\equiv\neg\neg a\lor\neg\neg d)\lor(\neg c\land(c\lor e))$$
-$$\equiv(a\lor c\lor d)\land(a\lor d\lor c\lor e))$$
+\begin{align*}
+		\gamma_1{}&\equiv(a\lor b)\rightarrow(c\lor d)\\
+			&=\neg(a\lor b)\lor (c\lor d)\\&=\neg(a\lor b)\lor (c\lor d)\\
+			&=(\neg a \land \neg b)\lor(c \lor d)\\
+			&= (\neg a\lor c\lor d) \land (\neg b\lor c \lor d)\\
+			\\
+		\gamma_2{}&\equiv(\neg a\lor\neg d)\rightarrow(\neg c\land(c\lor e))\\
+			&=\neg(\neg a\land\neg d)\lor(\neg c\land(c\lor e))\\
+			&=\neg\neg a\lor\neg\neg d)\lor(\neg c\land(c\lor e))\\
+			&=(a\lor c\lor d)\land(a\lor d\lor c\lor e))\\
+			\\
+		\gamma_3{}&\equiv a \rightarrow(\neg c\land\neg b\land(\neg d\lor b))\\
+			&=\neg a\lor(\neg c\land\neg b\land(\neg d\lor b))\\
+			&=(\neg a\lor\neg c)\land(\neg a\lor \neg b)\land(\neg a\lor\neg d\lor b)\\
+			\\
+		\neg\varphi{}&\equiv\neg((d\rightarrow(b\lor a))\rightarrow(d\land\neg(a\lor\neg b)))\\
+			&=\neg(\neg(d\rightarrow(b\lor a))\lor(d\land\neg(a\lor\neg b)))\\
+			&=\neg(\neg(\neg d\lor b\lor a)\lor(d\land\neg(a\lor\neg b))\\
+			&=\neg\neg(\neg d\lor b\lor a)\land\neg(d\land\neg(a\lor\neg b))\\
+			&=(\neg d\lor b\lor a)\land(\neg d\lor\neg\neg(a\lor\neg b))\\
+			&=(\neg d\lor b\lor a)\land(\neg d\lor a\lor\neg b)\\
+\end{align*}
 
-$$\gamma_3= a \rightarrow(\neg c\land\neg b\land(\neg d\lor b))$$
-$$\equiv\neg a\lor(\neg c\land\neg b\land(\neg d\lor b))$$
-$$\equiv(\neg a\lor\neg c)\land(\neg a\lor \neg b)\land(\neg a\lor\neg d\lor b)$$
-
-$$\neg\varphi=\neg((d\rightarrow(b\lor a))\rightarrow(d\land\neg(a\lor\neg b)))$$
-$$\equiv\neg(\neg(d\rightarrow(b\lor a))\lor(d\land\neg(a\lor\neg b)))$$
-$$\equiv\neg(\neg(\neg d\lor b\lor a)\lor(d\land\neg(a\lor\neg b))$$
-$$\equiv\neg\neg(\neg d\lor b\lor a)\land\neg(d\land\neg(a\lor\neg b))$$
-$$\equiv(\neg d\lor b\lor a)\land(\neg d\lor\neg\neg(a\lor\neg b))$$
-$$\equiv(\neg d\lor b\lor a)\land(\neg d\lor a\lor\neg b)$$
-Ahora que tenemos lsa formas normales conjuntivas de todas las cláusulas, podemos formar el conjunto:
+Ahora que tenemos las formas normales conjuntivas de todas las cláusulas, podemos formar el conjunto:
 %\begin{multline} para hacer lo mismo pero sin alinear al centro.
-\begin{equation}
+\begin{equation*}
 \begin{split}
 \{(\neg a\lor c\lor d) \land (\neg b\lor c \lor d)\\(a\lor c\lor d)\land(a\lor d\lor c\lor e))\\ (\neg a\lor\neg c)\land(\neg a\lor \neg b)\land(\neg a\lor\neg d\lor b)\\ (\neg d\lor b\lor a)\land(\neg d\lor a\lor\neg b)\}
 \end{split}
-\end{equation}
+\end{equation*}
 Este conjunto es equivalente a este conjunto (separando por las $\land$):
-\begin{equation}
+\begin{equation*}
 \begin{split}
-\Gamma=\{\neg a\lor c\lor d \quad \neg b\lor c \lor d\quad a\lor c\lor d\\a\lor d\lor c\lor e\quad \neg a\lor\neg c\quad\neg a\lor \neg b\quad\neg a\lor\neg d\lor b\\ \neg d\lor b\lor a\quad \neg d\lor a\lor\neg b \}
+\Gamma=\{\neg a\lor c\lor d, \quad \neg b\lor c \lor d,\quad a\lor c\lor d\\a\lor d\lor c\lor e,\quad \neg a\lor\neg c,\quad\neg a\lor \neg b,\quad\neg a\lor\neg d\lor b\\ \neg d\lor b\lor a,\quad \neg d\lor a\lor\neg b \}
 \end{split}
-\end{equation}
+\end{equation*}
 Ahora estudiaremos la satisfacibilidad de  $\Gamma$ mediante el algoritmo de Davis-Putnam:\\
 I)No hay tautologías, luego no aplicamos esta regla.\\
 II)No hay cláusulas unit, luego no aplicamos esta regla tampoco.\\
-III)Podemos aplicarla ya que aparece e y no $\neg e$: $\lambda=e$ y queda el conjunto:
+III)Podemos aplicarla ya que aparece $e$ y no aparece $\neg e$: $\lambda\equiv e$ y queda el conjunto:
 \begin{equation}
 \begin{split}
 \{\neg a\lor c\lor d \quad \neg b\lor c \lor d\quad a\lor c\lor d\\ \neg a\lor\neg c\quad\neg a\lor \neg b\quad\neg a\lor\neg d\lor b\\ \neg d\lor b\lor a\quad \neg d\lor a\lor\neg b \}
 \end{split}
 \end{equation}
 II y III)No pueden aplicarse.
-IV)Divido en dos subconjuntos. $\lambda=\neg a \quad \lambda^c=a$:
+IV)Divido en dos subconjuntos. $\lambda\equiv\neg a \quad \lambda^c\equiv a$:
 $$\Delta_1=\{c\lor d\quad \neg b\lor c\lor d\quad\neg c\quad\neg b\quad b\lor\neg d\}$$
 $$\Delta_2=\{\neg b\lor c\lor d\quad d\lor\neg c\quad b\lor\neg d\quad\neg b\lor\neg d\}$$
 $\Gamma$ es insatisfacible si y solo si $\Delta_1$ y $\Delta_2$ lo son. Comencemos analizando $\Delta_1$:\\
-II)Se puede aplicar, ya que hay una cláusula unit ($\neg c$). $\lambda=\neg c$. Elimino las cláusulas donde aparece.
+II)Se puede aplicar, ya que hay una cláusula unit ($\neg c$). $\lambda\equiv\neg c$. Elimino las cláusulas donde aparece.
 $$\{ c\lor d\quad\neg b\lor c\lor d\quad\neg b\quad b\lor\neg d \}\neq \emptyset$$
-$$\lambda^c=c$$
+$$\lambda^c\equiv c$$
 $$\{d\quad\neg b\lor d\quad\neg b\quad b\lor\neg d\}$$
 II)$\lambda=d$
 $$\{\neg b\quad b\lor\neg d\}\neq\emptyset$$
@@ -586,7 +670,8 @@ Las distintas formas de hacer grupos en Mapas de Karnaugh son:
 
 
 %LAS COORDENADAS SE PONEN INTERCAMBIANDO AB CD. POR ESO NO TE CUADRABA NADA.
-
+%~~Oye me encantan estos comentarios xddd~~
+		
 \large{\textbf{Ejemplo}}
 Dar la función mínima como producto de sumas y como suma de productos de la función:
 $$f(a,b,c,d)=\Sigma(0,1,2,4,5,6,8,9,15)$$
@@ -630,10 +715,10 @@ Comenzamos con el mapa de los minitérminos:
  
 Vamos a ver qué factores salen de cada grupo:
 \begin{itemize}
-\item Rojo) $\bar{a}\cdot\bar{c}$
-\item Naranja) $c$
-\item Azul) $\bar{a}\cdot\bar{d}$
-\item Verde) $\bar{b}\cdot\bar{c}$
+\item \textcolor{red}{Rojo} $\bar{a}\cdot\bar{c}$
+\item \textcolor{orange}{Naranja} $c$
+\item \textcolor{blue}{Azul} $\bar{a}\cdot\bar{d}$
+\item \textcolor{green}{Verde} $\bar{b}\cdot\bar{c}$
 \end{itemize}
 Luego la función simplificada por minitérminos es:
 $$\bar{a}\cdot\bar{c}+a\cdot b\cdot c\cdot d+\bar{a}\cdot\bar{d}+\bar{b}\cdot\bar{c}$$   
@@ -650,10 +735,10 @@ En el caso del mapas de los maxitérminos:
 
 Vamos a ver qué factores salen de cada grupo:
 \begin{itemize}
-\item Rojo) $\bar{a}+\bar{b}+c$
-\item Naranja) $\bar{a}+\bar{c}+d$
-\item Azul) $\bar{a}+b+\bar{c}$
-\item Verde) $a+\bar{b}+\bar{c}$
+\item \textcolor{red}{Rojo} $\bar{a}+\bar{b}+c$
+\item \textcolor{orange}{Naranja} $\bar{a}+\bar{c}+d$
+\item \textcolor{blue}{Azul} $\bar{a}+b+\bar{c}$
+\item \textcolor{green}{Verde} $a + \bar{b} +\bar{c}$
 \end{itemize}
 Luego la función simplificada por maxitérminos es:
 $$(\bar{a}+\bar{b}+c)\cdot(\bar{a}+\bar{c}+d)\cdot(\bar{a}+b+\bar{c})\cdot(a+\bar{b}+\bar{c})$$
@@ -690,8 +775,8 @@ Ahora construimos los mapas de Karnaugh (se pueden poner solo los 1 en los minit
 
 En este caso, poner los términos no importa como 1 nos ayuda a hacer grupos mayores, por los que los tomaremos como si fueran 1, si no, bastaría tomarlos como 0.
 \begin{itemize}
-\item Verde) $a\bar{c}$
-\item Rojo) $\bar{a}c$
+\item \textcolor{green}{Verde} $a\bar{c}$
+\item \textcolor{red}{Rojo} $\bar{a}c$
 \end{itemize}
 Luego la función simplificada por miitérminos es: $a\bar{c}+\bar{a}c$
 
@@ -761,7 +846,7 @@ $\begin{array}{F*{20}{C}}
        &  O &   O &   O &   O &  O &  O & O & O & O \\
 \end{array}$
 
-Como se puede ver, todos los grupos osn esenciales salvo el 8,9 ya que ningún círculo de esta línea es único en sus verticales. Por tanto, cogiendo los otros grupos, tenemos que la función es:
+Como se puede ver, todos los grupos son esenciales salvo el 8,9 ya que ningún círculo de esta línea es único en sus verticales. Por tanto, cogiendo los otros grupos, tenemos que la función es:
 $$f(a,b,c,d)=\bar{b}\bar{d}+\bar{a}c+a\bar{c}d$$
 
 
