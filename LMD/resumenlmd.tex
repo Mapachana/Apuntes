@@ -254,6 +254,25 @@ Esta no es la única forma de probar una propiedad por inducción. Mediante un d
 
 En otras palabras, para trabajar con este principio, \emph{suponemos} que la propiedad se cumple para los números menores que $n$ y probamos que se cumple para $n$.
 
+\subsection{Literatura de Inducción}
+
+Para tener muy muy bien los ejercicios de inducción, recomendamos seguir esta estructura:
+
+\begin{itemize}
+				\item \textbf{Primer Principio:} ``La demostración es por el primer principio de inducción, según el enunciado $P(i)$ del tenor: $<$propiedad$>$.
+
+$<$Realizamos el caso base$>$
+
+Supongamos que $n$ es un número natural y que para $n$ es cierto $P(n)$ (Hipótesis de Inducción). Demostraremos que en consecuencia es cierto $P(n+1)$.
+
+$<$Demostración$>$
+
+Por el primer principio de inducción finita para todo número natural se tiene $P(n)$"
+
+\item \textbf{Segundo Principio:} Es todo idéntico, exepto cambiar donde ponemos ``Primer principio'' por ``Segundo principio'' y en lugar de ``Supongamos [...] $P(n+1)$'' escribimos:
+
+				``Supongamos que $n$ es un número natural y que para todo natural $k$ tal que $k<n$ vale $P(k)$ (Hipótesis de inducción). Demostraremos que en consecuencia vale $P(n)$."
+\end{itemize}
 \subsection{Ejemplos de aplicación}
 
 \subsubsection*{Ejemplo 1: Primer Principio.} \emph{Pruebe que el producto de tres naturales consecutivos es divisible por 6.}\\
