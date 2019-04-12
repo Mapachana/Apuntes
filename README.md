@@ -25,3 +25,6 @@ De momento aquí hay una lista de apuntes que me parecen útiles:
 - De la asignatura de EC, donde se trabaja con ensamblador:
 	- [Apuntes]( https://github.com/Mapachana/Ensamblador )
 
+- De la asignatura AC, apuntes para paralelizar código:
+    - [Apuntes de prácticas](https/github.com/Mapachana/AC)
+
