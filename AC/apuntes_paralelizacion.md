@@ -657,3 +657,235 @@ int main()  {
 }
 ```
 
+## Entorno de ejecución
+
+### Introducción
+
+En esta parte vamos a tratar como consultar e influir en la ejecución de un programa paralelo usando, de mayor a menor prioridad:
+
+- Cláusulas: No modifican las variables de control y solo afectan a la directiva que las usa. Por ejemplo if, schedule, num_threads.
+- Funciones del entorno de ejecución: Solo afectan al código que las usa.
+- Variables de entorno: Afectan a los códigos que se ejecutan a partir de su modificación.
+- Variables de control internas.
+
+### Variables de control internas
+
+| Variable de control | Valor          | Valor inicial | ¿Qué controla?                                           | Consultar   | Modificar                     |
+| ------------------- | -------------- | ------------- | -------------------------------------------------------- | ----------- | ----------------------------- |
+| dyn-var             | true/false     | Depende       | Ajuste dinámico del número de threads                    | Función     | Función o Variable de entorno |
+| nthreads-var        | Número         | Depende       | Threads en la siguiente ejecución paralela               | Función     | Función o Variable de entorno |
+| thread-limit-var    | Número         | Depende       | Máximo número de threads para todo el programa           | Función     | Variable de entorno           |
+| nest-var            | true/false     | False         | Paralelismo anidado                                      | Función     | Función o Variable de entorno |
+| run-sched-var       | (kind[,chunk]) | Depende       | Planificación de bucles para runtime                     | Función     | Función o Variable de entorno |
+| def-sched-var       | (kind[,chunk]) | Depende       | Planificación de bucles por defecto. Ámbito del programa | No se puede | No se puede                   |
+
+Donde la planificación de bucles hace referencia a cómo se reparten las iteraciones a ejecutar entre las distintas hebras.
+
+### Variables de entorno
+
+Cada variable de control tiene asociada una variable de entorno mediante la cuál se puede modificar (si está permitido, como viene en la tabla del apartado anterior). En tal caso, la modificación se realiza desdde fuera del programa.
+
+| Variable de control | Variable de entorno | Ejemplo de modificación (Bash)                               |
+| ------------------- | ------------------- | ------------------------------------------------------------ |
+| dyn-var             | OMP_DYNAMIC         | export OMP_DYNAMIC=FALSE/TRUE                                |
+| nthreads-var        | OMP_NUM_THREADS     | export OMP_NUM_THREADS=8                                     |
+| thread-limit-var    | OMP_THREAD_LIMIT    | export OMP_THREAD_LIMIT=8                                    |
+| nest-var            | OMP_NESTED          | export OMP_NESTED=FALSE/TRUE                                 |
+| run-sched-var       | OMP_SCHEDULE        | export OMP_SCHEDULE="static,4" <br />export OMP_SCHEDULE="dynamic" |
+| def-sched-var       | -                   | -                                                            |
+
+run-sched-var admite dos valores: 
+
+- El primero representa el tipo de asignación de las iteraciones a las hebras.
+- El segundo es la cantidad de iteraciones que se asignan como mínimo o cada vez que se reparten iteraciones a una hebra a cada una de ellas. Por defecto es el número de iteraciones entre el número de hebras. La única hebra que puede tener menos iteraciones que las fijadas por el chunk es la última, pues se queda con las iteraciones restantes.
+
+### Funciones del entorno de ejecución
+
+Cada variable de control tiene una función para consultarla o modificarla. Si los argumentos de esta función se pasan por referencia, significa que el valor que se obtiene se guarda en lo pasado como argumento (se modifican por el valor consultado). Las funciones se llaman desde dentro del código.
+
+| Variable de control | Rutina para consultar          | Rutina para modificar        |
+| ------------------- | ------------------------------ | ---------------------------- |
+| dyn-var             | omp_get_dynamic()              | omp_set_dynamic()            |
+| nthreads-var        | omp_get_max_threads()          | omp_set_num_threads          |
+| thread-limit-var    | omp_get_thread_limit()         | -                            |
+| nest-var            | omp_get_nested()               | omp_set_nested()             |
+| run-sched-var       | omp_get_schedule(&kind,&chunk) | omp_set_schedule(kind,chunk) |
+| def-sched-var       | -                              | -                            |
+
+Otras funciones útiles son:
+
+- omp_get_thread_num() : Devuelve al thread su identidicador dentro del grupo de threads.
+- omp_get_num_threads() : Obtiene el número de threads que se están usando en una región paralela. Devuelve 1 en código secuencial.
+- omp_get_num_procs() : Devuelve el número de procesadores disponibles para el programa en el momento de la ejecución.
+- omp_in_parallel() : Devuelve true si se llama dentro de una región paralela activa y false en caso contrario.
+
+### Orden de preferencia para fijar el número de threads
+
+Orden de mayor a menor preferencia para fijar el número de threads con las que comienza una sección paralela:
+
+- El número resultado de evaluar la cláusula if.
+- El número fijado por la cláusula num_threads.
+- El número fijado por la función omp_set_num_threads().
+- El contenido de la variable de entorno OMP_NUM_THREADS.
+- El número fijado por defecto por la implementación: normalmente el número de cores de un nodo, aunque puede variar dinámicamente. 
+
+### Cláusulas para interaccionar con el entorno
+
+#### Cláusula if
+
+```c
+if <condicion>
+```
+
+- Si se da la condición se ejecuta en paralelo, si no se ejecuta en secuencial.
+- Sólo puede usarse en `parallel`, `parallel for` y `parallel sections`.
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <omp.h>
+
+int main(int argc, char **argv)
+{
+   int i, n=20, tid;
+   int a[n],suma=0,sumalocal;
+   if(argc < 2)     {
+      fprintf(stderr,"[ERROR]-Falta iteraciones\n");
+      exit(-1);
+     }
+   n = atoi(argv[1]); if (n>20) n=20; 
+   for (i=0; i<n; i++) {
+      a[i] = i; 
+   }
+ 
+// Si n>4 se hace en paralelo con todas las cláusulas, si no se ejecuta en secuencial
+  #pragma omp parallel if(n>4) default(none) \
+                     private(sumalocal,tid) shared(a,suma,n)
+  {  sumalocal=0;
+     tid=omp_get_thread_num();
+     #pragma omp for private(i) schedule(static) nowait
+     for (i=0; i<n; i++)
+     {   sumalocal += a[i];
+         printf(" thread %d suma de a[%d]=%d sumalocal=%d \n",
+                     tid,i,a[i],sumalocal);
+     } 
+     #pragma omp atomic 
+         suma += sumalocal;
+     #pragma omp barrier
+     #pragma omp master
+         printf("thread master=%d imprime suma=%d\n",tid,suma);
+  }
+
+  return(0);
+}
+```
+
+#### Cláusula schedule
+
+```c
+schedule (kind[, chunk])
+```
+
+- kind establece la forma de asignación, puede ser:
+  - static
+  - dynamic
+  - guided
+  - auto
+  - runtime
+- Sólo se admite en bucles.
+- Por defecto es tipo `static`.
+- EL chunk por defecto es 1.
+
+##### static
+
+Las iteraciones se dividen en unidades de chunk iteraciones y se reparten usando round-robin (como una baraja de cartas al repartir) a cada hebra.
+
+El reparto se hace en compilación.
+
+##### dynamic
+
+El reparto se hace en tiempo de ejecución.
+
+Es útil si no se sabe cuanto tarda cada iteración.
+
+A cada hebra se le asignan chunk iteraciones cada vez que lo solicita (cada vez que queda libre).
+
+Supone una sobrecarga por repartirlas en tiempo de ejecución, pero aún así es más eficiente que `static`.
+
+##### guided
+
+El reparto se hace en tiempo de ejecución.
+
+Es útil si no se sabe el tiempo de ejecución de las iteraciones o su número.
+
+El tamaño del bloque va menguando, ya que se reparten  hebrasrestantees/chunk (redondeado a entero) o chunk si el resultado de dicho cociente es menor que chunk iteraciones a cada hebra que lo solicite.
+
+Tiene una sobrecarga adicional por ser en tiempo de ejecución, pero menos que `dynamic`.
+
+##### runtime
+
+El tipo de distribución (static, dynamic o guidded) se fija en tiempo de ejecución y depende de la variable `run-sched-var`, esto es, se puede modificar en el programa.
+
+Para fijarlo desde fuera se usa `export OMP_SCHEDULE="kind,chunk"`
+
+##### Ejemplo de reparto con los tres tipos que existen
+
+Supongamos un bucle con 20 iteraciones (de la 0 a la 19), que se ejecuta en  paralelo con 2 hebras (0 y 1) y un chunk=3.
+
+Suponiendo que las iteraciones no tardan lo mismo, y, por tanto, las hebras piden trabajo en este orden: 0,0,1,0,1,0,0 (tanto en dinámico como en guiado, aunque en guiado podría cambiar el orden según el reparto, el orden en el que piden trabajo las hebras en dinámico y guiado no siempre coincide, solo lo hemoos supuesto así por simplicidad).
+
+| Iteración | Static | Dynamic | Guided |
+| --------- | ------ | ------- | ------ |
+| 0         | 0      | 0       | 0      |
+| 1         | 0      | 0       | 0      |
+| 2         | 0      | 0       | 0      |
+| 3         | 1      | 0       | 0      |
+| 4         | 1      | 0       | 0      |
+| 5         | 1      | 0       | 0      |
+| 6         | 0      | 1       | 0      |
+| 7         | 0      | 1       | 0      |
+| 8         | 0      | 1       | 0      |
+| 9         | 1      | 0       | 0      |
+| 10        | 1      | 0       | 0      |
+| 11        | 1      | 0       | 0      |
+| 12        | 0      | 1       | 0      |
+| 13        | 0      | 1       | 0      |
+| 14        | 0      | 1       | 0      |
+| 15        | 1      | 0       | 1      |
+| 16        | 1      | 0       | 1      |
+| 17        | 1      | 0       | 1      |
+| 18        | 0      | 0       | 0      |
+| 19        | 0      | 0       | 0      |
+
+Nota: Es importante remarcar que en el guiado no se han realizado todas las peticiones que en dinámico, si no que ha bastado la secuencia 0,0,1,0.
+
+Además, en dinámico primero pide la hebra 0, y se le asignan 20/2=10 iteraciones, luego pide la 0 de nuevo y se le asignan 10/2=5 iteraciones, a continuación pide la hebra 1, a la que se le asignan 5/2=2.5, que se queda en 2, ahora, por ser 2 menor que 3 (siendo 3 el chunk) se le asignan 3 iteraciones, y a la hebra 0 al pedir de nuevo las restantes.
+
+##### Otro ejemplo ilustrativo de guided
+
+Suponemos ahora un programa con 20 iteraciones (de 0 a 19), 2 hebras (0 y 1) y un chunk=3 en el que las hebras piden trabajo en el siguiente orden: 0,1,1,0,0,1.
+
+| Iteración | Hebra que lo ejecuta |
+| --------- | -------------------- |
+| 0         | 0                    |
+| 1         | 0                    |
+| 2         | 0                    |
+| 3         | 0                    |
+| 4         | 0                    |
+| 5         | 0                    |
+| 6         | 0                    |
+| 7         | 0                    |
+| 8         | 0                    |
+| 9         | 0                    |
+| 10        | 1                    |
+| 11        | 1                    |
+| 12        | 1                    |
+| 13        | 1                    |
+| 14        | 1                    |
+| 15        | 1                    |
+| 16        | 1                    |
+| 17        | 1                    |
+| 18        | 0                    |
+| 19        | 0                    |
+
