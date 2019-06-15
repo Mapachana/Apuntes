@@ -819,7 +819,7 @@ El reparto se hace en tiempo de ejecución.
 
 Es útil si no se sabe el tiempo de ejecución de las iteraciones o su número.
 
-El tamaño del bloque va menguando, ya que se reparten  hebrasrestantees/chunk (redondeado a entero) o chunk si el resultado de dicho cociente es menor que chunk iteraciones a cada hebra que lo solicite.
+El tamaño del bloque va menguando, ya que se reparten  iteracionesrestantes/hebras (redondeado a entero) o chunk si el resultado de dicho cociente es menor que chunk iteraciones a cada hebra que lo solicite.
 
 Tiene una sobrecarga adicional por ser en tiempo de ejecución, pero menos que `dynamic`.
 
