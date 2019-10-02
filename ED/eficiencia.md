@@ -1,30 +1,36 @@
 # Eficiencia
 ## Tamaño del problema
-Dados códigos vamos a convertir estos dos códigos en dos funciones que marcarán su eficiencia.
+
+Vamos a convertir ciertos códigos en dos funciones que marcarán su eficiencia:
 $$n_1\rightarrow f_1(n)$$
 $$n_2\rightarrow f_2(n)$$
-Para decidir qué código es más eficiente vamos a comparar las funciones obtenidas.
-Una comparativa estándar de las funciones de eficencia sería:
+
+Para decidir qué código es más eficiente vamos a comparar las funciones obtenidas. Una comparativa estándar de las funciones de eficencia sería:
 $$log_2 n < n < nlog_2 n < n^2 < n^3 < 2^n$$
 
 ## Estudio experimental
-Se escribe el programa  y se mide con distintos datos el tiempo que tarda en ejecutarse. Recogemos los datos y con un ajuste se escoge la función que mejor se ajuste.
-Esto tiene varias desventajas:
 
-- Para medir el tiempo siempre se debe medir en el mismo orddenador,
+Se escribe el programa y se mide con distintos datos el tiempo que tarda en ejecutarse. Recogemos los datos y con un ajuste se escoge la función que mejor se ajuste. Esto tiene varias desventajas:
+
+- Para medir el tiempo siempre se debe medir en el mismo ordenador,
 - Los datos son limitados, necesitamos todas las entradas.
 
 Por lo tanto, realizaremos un estudio teórico.
+
 ## Estudio teórico
+
 ### Familias de órdenes de eficiencia
-No importa llo que  ocurrra con constantes o términos menos significativos, si no el término de mayor grado y, por tanto, importarán las familias de eficiencia a las que pertenezca.
+
+No importa lo que ocurrra con constantes o términos menos significativos, sino el término de mayor grado y, por tanto, importarán las familias de eficiencia a las que pertenezca.
 
 - n: lineal.
 - n^2^: Cuadrático.
 - n^k^: (con k número natural) polinómico.
 - log~a~n: Logarítmico.
 - c^n^: Exponencial.
+
 ### Comparación de órdenes de eficiencia
+
 Dadas dos funciones, nos quedaremos con la menor según el orden que hay arriba a pesar de que para datos pequeños una función sea más grande que otra, solo nos preocuparemos de datos grandes a la hora de compararlos.
 Dadas dos funciones f(n) y g(n) decimos que f(n) es O(g(n)) si, y solo si, f(n) < cg(n) para n>n~0~ con c y n~0~ constantes.
 Por ejemplo: (n+1)^2^ es O(n^2^) con n~0~=1 y c=4
@@ -32,7 +38,9 @@ Otro ejemplo: 3n^3^+2n^2^ es O(n^3^) con n~0~=0 y c= 5
 otro ejemplo: 225 es O(1)
 
 ### Jerarquía de funciones
-![](./img_18_09/jerarquia.png) 
+
+![](./img_18_09/jerarquia.png)
+
 ### Reglas simples
 - Transitividad:
 $$f(n)\rightarrow O(g(n)) ; g(n) \rightarrow O(h(n)) \longrightarrow f(n) \rightarrow O(h(n))$$
@@ -61,12 +69,15 @@ Un algoritmo cuadrático puede ser mejor que uno lineal si:
 - El algoritmo lineal tiene costes de mantenimiento superiores alos del algoritmo cuadrático.
 
 ### Notación O
+
 Estas reglas se usan para calcular todos los códigos iterativos (no los recursivos)
-- Regla de la suma: Sean T~1~(n) y T~2~(n) los tiempos de dos trozos de código tales que T~1~(n) es O(f(n)) y T~2~(n) es O(g(n))). Entonces T~1~(n)+T~2~(n) es de orden O(max{f(n), g(n)})
-- Regla del producto:  Sean T~1~(n) y T~2~(n) los tiempos de dos trozos de código tales que T~1~(n) es O(f(n)) y T~2~(n) es O(g(n))). Si ninguna de ellas es negativa, entonces T~1~(n)T~2~(n) es de orden O(f(n)g(n))
+- Regla de la suma: Sean T~1~(n) y T~2~(n) los tiempos de dos trozos de código tales que T~1~(n) es O(f(n)) y T~2~(n) es O(g(n)). Entonces T~1~(n)+T~2~(n) es de orden O(max{f(n), g(n)})
+- Regla del producto:  Sean T~1~(n) y T~2~(n) los tiempos de dos trozos de código tales que T~1~(n) es O(f(n)) y T~2~(n) es O(g(n)). Si ninguna de ellas es negativa, entonces T~1~(n)T~2~(n) es de orden O(f(n)g(n))
 
 ### Calcular la eficiencia
+
 #### Casos simples
+
 Para sacar la función de un código:
 
 - Operación elemental: Operación de nu algoritmo cuyo tiempo de ejecución se puede acotar superiormente por una constante. Por ejemplo una asignación, sumas, productos, entradas y salidas.
@@ -100,11 +111,13 @@ En el peor de los casos se hace n veces, y es lo que contaremos.
 > ¡Hay más ejemplos en las diapositivas a mano!
 
 #### Con funciones
-- Debemos mirar el coste de una llamada a función y seguir contando la eficiencia. 
 
-Las funciones de librerías se saben cuanto cuesta cada vez que haces una llamada, lo pone en la función.
+- Debemos mirar el coste de una llamada a función y seguir contando la eficiencia.
+
+Las funciones de librerías se saben cuánto cuesta cada vez que haces una llamada, lo pone en la función.
 
 #### Con bucles no homogéneos
+
 - Se debe contar las iteraciones en el peor caso.
 ```cpp
 for (i = 0; i < n; i++)
