@@ -37,7 +37,7 @@ Por ejemplo:
 // El código siguiente se ejecuta en paralelo con 8 hebras si N>20
 ```
 
-Para usar varias líneas de código se usa `\` para unirlas: 
+Para usar varias líneas de código se usa `\` para unirlas:
 
 ```c++
 #pragma omp parallel private (...) \
@@ -64,7 +64,7 @@ Por ejemplo, el siguiente código en c comprueba si se ha compilado con `fopenmp
 #ifdef _OPENMP
 	omp_set_num_threadas(nthread)
 #endif
-        
+
 #pragma omp parallel for
 for(i=0;i<n;i++)
     for(j=0;j<n;j++)
@@ -84,7 +84,7 @@ for(i=0;i<n;i++)
 - Cada thread ejecuta el código incluido en la región.
 - No reparte tareas entre threads.
 - Se pueden anidar y usar otras directivas dentro de esta. (No se pueden usar otras directivas fuera de parallel).
-- Tiene una barrera implícita al final (es decir, dado un punto no se sigu ejecutando hasta que todas las hebras han llegado a él).
+- Tiene una barrera implícita al final (es decir, dado un punto no se sigue ejecutando hasta que todas las hebras han llegado a él).
 
 ```c
 #include <stdio.h>
@@ -137,7 +137,7 @@ int main(int argc, char *argv[]){
     {
         #pragma omp for
         for (i=0; i<n; ++i)
-            printf("Soy la hebra %d y ejecuto la iteracion %d",omp_get_thread_num(),i);
+            printf("Soy la hebra %d y ejecuto la iteración %d",omp_get_thread_num(),i);
     }
     return 0;
 }
@@ -222,16 +222,16 @@ int main(int argc, char** argv){
 int main (int argc, char**argv){
     int tid;
     time_t t1,t2;
-    
+
     #pragma omp parallel private(tid,t1,t2) //Hace privadas a cada hebra tid,t1 y t2
     {
         tid = omp_get_thread_num();
         if (tid < omp_get_num_threads/2)
             system("sleep 3");
         t1 = time(NULL);
-        
+
         #pragma omp barrier
-        
+
         t2 = time(NULL)-t1;
         printf("Tiempo=%d seg\n", t2);
     }
@@ -250,19 +250,19 @@ int main(int argc, char **argv)   {
    int i, n=20, a[n],suma=0,sumalocal;
    if(argc < 2)     {
          fprintf(stderr,"\nFalta iteraciones\n"); exit(-1);
-   } 
-   n = atoi(argv[1]); if (n>20) n=20; 
+   }
+   n = atoi(argv[1]); if (n>20) n=20;
 
-   for (i=0; i<n; i++)    a[i] = i; 
- 
+   for (i=0; i<n; i++)    a[i] = i;
+
 #pragma omp parallel private(sumalocal)
 {  sumalocal=0;
    #pragma omp for  schedule(static)
    for (i=0; i<n; i++)
    {   sumalocal += a[i];
        printf(" thread %d suma de a[%d]=%d sumalocal=%d \n",  omp_get_thread_num(),i,a[i],sumalocal);
-   } 
-   #pragma omp critical 
+   }
+   #pragma omp critical
        suma = suma + sumalocal;
 }  
    printf("Fuera de 'parallel' suma=%d\n",suma);
@@ -285,18 +285,18 @@ int main(int argc, char **argv)  {
       fprintf(stderr,"\nFalta iteraciones\n");
       exit(-1);
      }
-   n = atoi(argv[1]); if (n>20) n=20; 
+   n = atoi(argv[1]); if (n>20) n=20;
 
-   for (i=0; i<n; i++)     a[i] = i; 
- 
+   for (i=0; i<n; i++)     a[i] = i;
+
   #pragma omp parallel private(sumalocal)
   {  sumalocal=0;
      #pragma omp for  schedule(static)
      for (i=0; i<n; i++)
      {   sumalocal += a[i];
          printf(" thread %d suma de a[%d]=%d sumalocal=%d \n",  omp_get_thread_num(),i,a[i],sumalocal);
-     } 
-     #pragma omp atomic 
+     }
+     #pragma omp atomic
          suma += sumalocal;
   }  
   printf("Fuera de 'parallel' suma=%d\n",suma);
@@ -319,10 +319,10 @@ int main(int argc, char **argv)  {
       fprintf(stderr,"\nFalta iteraciones\n");
       exit(-1);
      }
-   n = atoi(argv[1]); if (n>20) n=20; 
+   n = atoi(argv[1]); if (n>20) n=20;
 
-   for (i=0; i<n; i++)   a[i] = i; 
- 
+   for (i=0; i<n; i++)   a[i] = i;
+
   #pragma omp parallel private(sumalocal,tid)
   {  sumalocal=0;
      tid=omp_get_thread_num();
@@ -330,8 +330,8 @@ int main(int argc, char **argv)  {
      for (i=0; i<n; i++)
      {    sumalocal += a[i];
            printf(" thread %d suma de a[%d]=%d sumalocal=%d \n",  tid,i,a[i],sumalocal);
-     } 
-     #pragma omp atomic 
+     }
+     #pragma omp atomic
           suma += sumalocal;
      #pragma omp barrier
      #pragma omp master
@@ -448,12 +448,12 @@ int main()
        suma = suma + a[i];
        printf(
         "thread %d suma a[%d] / ", omp_get_thread_num(), i);
-   } 
+   }
    printf(
    "\n* thread %d suma= %d", omp_get_thread_num(), suma);
 }
 
-   printf("\n"); 
+   printf("\n");
 
    return 0;
 }
@@ -484,9 +484,9 @@ int main()  {
    {
        v = a[i];
        printf("thread %d v=%d / ", omp_get_thread_num(), v);
-   } 
+   }
 
-   printf("\nFuera de la construcción'parallel for' v=%d\n", v); 
+   printf("\nFuera de la construcción'parallel for' v=%d\n", v);
    return 0;
 }
 ```
@@ -513,16 +513,16 @@ int main()  {
 
    for (i=0; i<n; i++)       a[i] = i;
 
-#pragma omp parallel for firstprivate(suma) 
+#pragma omp parallel for firstprivate(suma)
    for (i=0; i<n; i++)
    {
        // No hace falta inicializar porque usamos firstprivate
        suma = suma + a[i];
        printf(" thread %d suma a[%d] suma=%d \n",
              omp_get_thread_num(),i,suma);
-   } 
-   
-   printf("\nFuera de la construcción parallel suma=%d\n", 
+   }
+
+   printf("\nFuera de la construcción parallel suma=%d\n",
               suma);
 
    return 0;
@@ -539,7 +539,7 @@ Si se especifica `none` el programador deberá especificar el ámbito de todas l
 
 Si se especifica `shared` el ámbito por defecto de las variables será compartido.
 
-Se pueden excluit variables del ámbito por defecto usando shared, private, dirstprivate, lastprivate y reduction.
+Se pueden excluir variables del ámbito por defecto usando shared, private, dirstprivate, lastprivate y reduction.
 
 Solo puede haber una cláusula default.
 
@@ -573,7 +573,7 @@ int main(int argc, char const *argv[])
 
 `reduction(<operador>:<lista_de_variables>)`
 
-Cuando tenemos una variable compartida y sus copias privadas en las hebras al final de  la región paralela con esas variables se hace una reducción usando el operador especificado, es decir, en la variable con ámbito compartido se almacena el resultado de hacer la operación que indica el operador a todas las variables. Por ejemplo, almacenar en la variable compartida la suma de todas las copias privadas.
+Cuando tenemos una variable compartida y sus copias privadas en las hebras al final de la región paralela con esas variables se hace una reducción usando el operador especificado, es decir, en la variable con ámbito compartido se almacena el resultado de hacer la operación que indica el operador a todas las variables. Por ejemplo, almacenar en la variable compartida la suma de todas las copias privadas.
 
 En esta tabla se ven los operadores de reducción:
 
@@ -606,7 +606,7 @@ int main(int argc, char **argv)  {
      }
    n = atoi(argv[1]); if (n>20) {n=20; printf("n=%d",n);}
 
-   for (i=0; i<n; i++)    a[i] = i; 
+   for (i=0; i<n; i++)    a[i] = i;
 
    #pragma omp parallel for reduction(+:suma)
    for (i=0; i<n; i++)   suma += a[i];
@@ -636,11 +636,11 @@ int main()  {
 
    for (i=0; i<n; i++)     b[i] = -1;
 
-#pragma omp parallel 
-{   int a; 
+#pragma omp parallel
+{   int a;
     #pragma omp single copyprivate(a)
     {
-       printf("\nIntroduce valor de inicialización a: "); 
+       printf("\nIntroduce valor de inicialización a: ");
        scanf("%d", &a );
        printf("\nSingle ejecutada por el thread %d\n",
              omp_get_thread_num());
@@ -683,7 +683,7 @@ Donde la planificación de bucles hace referencia a cómo se reparten las iterac
 
 ### Variables de entorno
 
-Cada variable de control tiene asociada una variable de entorno mediante la cuál se puede modificar (si está permitido, como viene en la tabla del apartado anterior). En tal caso, la modificación se realiza desdde fuera del programa.
+Cada variable de control tiene asociada una variable de entorno mediante la cuál se puede modificar (si está permitido, como viene en la tabla del apartado anterior). En tal caso, la modificación se realiza desde fuera del programa.
 
 | Variable de control | Variable de entorno | Ejemplo de modificación (Bash)                               |
 | ------------------- | ------------------- | ------------------------------------------------------------ |
@@ -694,7 +694,7 @@ Cada variable de control tiene asociada una variable de entorno mediante la cuá
 | run-sched-var       | OMP_SCHEDULE        | export OMP_SCHEDULE="static,4" <br />export OMP_SCHEDULE="dynamic" |
 | def-sched-var       | -                   | -                                                            |
 
-run-sched-var admite dos valores: 
+run-sched-var admite dos valores:
 
 - El primero representa el tipo de asignación de las iteraciones a las hebras.
 - El segundo es la cantidad de iteraciones que se asignan como mínimo o cada vez que se reparten iteraciones a una hebra a cada una de ellas. Por defecto es el número de iteraciones entre el número de hebras. La única hebra que puede tener menos iteraciones que las fijadas por el chunk es la última, pues se queda con las iteraciones restantes.
@@ -714,7 +714,7 @@ Cada variable de control tiene una función para consultarla o modificarla. Si l
 
 Otras funciones útiles son:
 
-- omp_get_thread_num() : Devuelve al thread su identidicador dentro del grupo de threads.
+- omp_get_thread_num() : Devuelve al thread su identificador dentro del grupo de threads.
 - omp_get_num_threads() : Obtiene el número de threads que se están usando en una región paralela. Devuelve 1 en código secuencial.
 - omp_get_num_procs() : Devuelve el número de procesadores disponibles para el programa en el momento de la ejecución.
 - omp_in_parallel() : Devuelve true si se llama dentro de una región paralela activa y false en caso contrario.
@@ -727,14 +727,14 @@ Orden de mayor a menor preferencia para fijar el número de threads con las que 
 - El número fijado por la cláusula num_threads.
 - El número fijado por la función omp_set_num_threads().
 - El contenido de la variable de entorno OMP_NUM_THREADS.
-- El número fijado por defecto por la implementación: normalmente el número de cores de un nodo, aunque puede variar dinámicamente. 
+- El número fijado por defecto por la implementación: normalmente el número de cores de un nodo, aunque puede variar dinámicamente.
 
 ### Cláusulas para interaccionar con el entorno
 
 #### Cláusula if
 
 ```c
-if <condicion>
+if <condición>
 ```
 
 - Si se da la condición se ejecuta en paralelo, si no se ejecuta en secuencial.
@@ -754,11 +754,11 @@ int main(int argc, char **argv)
       fprintf(stderr,"[ERROR]-Falta iteraciones\n");
       exit(-1);
      }
-   n = atoi(argv[1]); if (n>20) n=20; 
+   n = atoi(argv[1]); if (n>20) n=20;
    for (i=0; i<n; i++) {
-      a[i] = i; 
+      a[i] = i;
    }
- 
+
 // Si n>4 se hace en paralelo con todas las cláusulas, si no se ejecuta en secuencial
   #pragma omp parallel if(n>4) default(none) \
                      private(sumalocal,tid) shared(a,suma,n)
@@ -769,8 +769,8 @@ int main(int argc, char **argv)
      {   sumalocal += a[i];
          printf(" thread %d suma de a[%d]=%d sumalocal=%d \n",
                      tid,i,a[i],sumalocal);
-     } 
-     #pragma omp atomic 
+     }
+     #pragma omp atomic
          suma += sumalocal;
      #pragma omp barrier
      #pragma omp master
@@ -819,7 +819,7 @@ El reparto se hace en tiempo de ejecución.
 
 Es útil si no se sabe el tiempo de ejecución de las iteraciones o su número.
 
-El tamaño del bloque va menguando, ya que se reparten  iteracionesrestantes/hebras (redondeado a entero) o chunk si el resultado de dicho cociente es menor que chunk iteraciones a cada hebra que lo solicite.
+El tamaño del bloque va menguando, ya que se reparten  iteraciones_restantes/hebras (redondeado a entero) o chunk si el resultado de dicho cociente es menor que chunk iteraciones a cada hebra que lo solicite.
 
 Tiene una sobrecarga adicional por ser en tiempo de ejecución, pero menos que `dynamic`.
 
@@ -833,7 +833,7 @@ Para fijarlo desde fuera se usa `export OMP_SCHEDULE="kind,chunk"`
 
 Supongamos un bucle con 20 iteraciones (de la 0 a la 19), que se ejecuta en  paralelo con 2 hebras (0 y 1) y un chunk=3.
 
-Suponiendo que las iteraciones no tardan lo mismo, y, por tanto, las hebras piden trabajo en este orden: 0,0,1,0,1,0,0 (tanto en dinámico como en guiado, aunque en guiado podría cambiar el orden según el reparto, el orden en el que piden trabajo las hebras en dinámico y guiado no siempre coincide, solo lo hemoos supuesto así por simplicidad).
+Suponiendo que las iteraciones no tardan lo mismo, y, por tanto, las hebras piden trabajo en este orden: 0,0,1,0,1,0,0 (tanto en dinámico como en guiado, aunque en guiado podría cambiar el orden según el reparto, el orden en el que piden trabajo las hebras en dinámico y guiado no siempre coincide, solo lo hemos supuesto así por simplicidad).
 
 | Iteración | Static | Dynamic | Guided |
 | --------- | ------ | ------- | ------ |
@@ -888,4 +888,3 @@ Suponemos ahora un programa con 20 iteraciones (de 0 a 19), 2 hebras (0 y 1) y u
 | 17        | 1                    |
 | 18        | 0                    |
 | 19        | 0                    |
-
