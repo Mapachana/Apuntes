@@ -18,7 +18,7 @@ Todos los punteros ocupan el mismo espacio. La memoria se reserva para el punter
 ### Operaciones
 - &: Hace un AND (multiplicar) bit a bit. Sirve para esconder mensajes en imágenes, por ejemplo. Devuelve la dirección de la variable (un puntero). No sirve para expresiones, debe ser una única variable.
 ```cpp
-&<var> 
+&<var>
 ```
 ```cpp
 int i = 5, *ptri;
@@ -128,13 +128,13 @@ También pueden apuntar a structs o class.
 Un puntero apunta al primer dato del struct o clase de ese clase y se accede a sus datos como _(\*puntero).dato_ y a métodos como _(\*puntero).método()_.
 
 Podemos usar el operador -> para acceder a datos miembros _(\*p).miembro_ o _p->miembro_.
-Una clase puede tener punteros como miembros, pueden apuntar a otro dato de la misma clase que estamos definiendo, por ejemplo en el caso de una clase persona, un puntero que apunta a su pareja. Pueden dereferenciarse varios punteros (si un puntero apunta a otro puntero es válido usar esto:)
+Una clase puede tener punteros como miembros, pueden apuntar a otro dato de la misma clase que estamos definiendo, por ejemplo en el caso de una clase persona, un puntero que apunta a su pareja. Pueden diferenciarse varios punteros (si un puntero apunta a otro puntero es válido usar esto:)
 ```cpp
 ptr->pareja->nombre //El puntero accede a otro puntero que accede al nombre.
 ```
 ###Punteros y funciones
 
-Un puntero puede ser un parámetro de funciones, es similar al paso po referencia.
+Un puntero puede ser un parámetro de funciones, es similar al paso por referencia.
 También podemos modificar un puntero pasando por referencia el puntero
 ```cpp
 void funcion (int *p) //Pasa puntero como argumento.
@@ -184,9 +184,9 @@ for (int i = 0; i<4; i++){
 	cout << *arrayPunts[i] << " ";
 }
 cout << endl;
-``` 
-Por ejemplo, para ordenar un array sin modificafr el array se crea un array de punteros con tantos punteros como el array a ordenar, donde cada puntero apunta al valor de su misma posición y se ordenan los punteros en lugar de los valores.
-Podemos tener un array de punteros a cadenas esstilo C.
+```
+Por ejemplo, para ordenar un array sin modificar el array se crea un array de punteros con tantos punteros como el array a ordenar, donde cada puntero apunta al valor de su misma posición y se ordenan los punteros en lugar de los valores.
+Podemos tener un array de punteros a cadenas estilo C.
 ```cpp
 const char*  constpalosBaraja[4]={"Oros","Copas", "Espadas", "Bastos"};
 cput << "Palos de la Baraja: ";
@@ -203,7 +203,7 @@ _argv_ es un array de cadenas de C.
 _argv[0]_ es el nombre del ejecutable, _argv[1]_ escribe el primer fichero que recibe y así sucesivamente.
 _argc_ almacena el tamaño del array.
 
-Para leer datos de un fichero se usa una variable de tipo ifstream 
+Para leer datos de un fichero se usa una variable de tipo ifstream
 ```cpp
 int entero;
 ifstream flujo;
@@ -350,7 +350,7 @@ void redimensionar (int *&v, int& tama, int aumento){
 ### Arrays dinámicos de objetos
 Funciona igual que con un tipo de dato nativo, salvo que se usa el constructor por defecto obligatoriamente al inicializar los datos de la memoria reservada.
 
-### Clases que contienen dartos en memoria dinámica
+### Clases que contienen datos en memoria dinámica
 Una clase puede contener punteros que se pueden a usar para almacenar datos en memoria dinámica.
 Los constructores pueden reservar la memoria dinámica y el destructor elimina la memoria dinámica que contiene  un objeto. Obviamente se puede aumentar o disminuir la memoria reservada con otros métodos.
 
