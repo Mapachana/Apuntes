@@ -28,3 +28,4 @@ De momento aquí hay una lista de apuntes que me parecen útiles:
 - De la asignatura AC, apuntes para paralelizar código:
     - [Apuntes de prácticas](https://github.com/Mapachana/Apuntes/blob/master/AC)
 
+Las prácticas de estas y otras asignaturas pueden encontrarse en repositorios aparte, estos repositorios contienen el nombre o siglas de dicha asignatura.
